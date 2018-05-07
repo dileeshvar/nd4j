@@ -30,14 +30,18 @@ public class ShapeTests extends BaseNd4jTest {
     public void testRowColVectorVsScalar() {
         INDArray arr = Nd4j.create(2);
         assertTrue(arr.isRowVector());
+        assertTrue(arr.isRowVectorOrScalar());
         INDArray colVector = arr.reshape(2,1);
         assertTrue(colVector.isColumnVector());
         assertFalse(arr.isScalar());
         assertFalse(colVector.isScalar());
+        assertTrue(colVector.isColumnVectorOrScalar());
 
         INDArray arr3 = Nd4j.scalar(1.0);
         assertFalse(arr3.isColumnVector());
         assertFalse(arr3.isRowVector());
+        assertTrue(arr3.isColumnVectorOrScalar());
+        assertTrue(arr3.isRowVectorOrScalar());
    }
 
     @Test
