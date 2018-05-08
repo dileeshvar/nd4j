@@ -6273,6 +6273,14 @@ public class Nd4j {
         return ret;
     }
 
+    public static INDArray zeros(long[] shape, char order) {
+        checkShapeValues(shape);
+
+        INDArray ret = INSTANCE.create(shape, order);
+        logCreationIfNecessary(ret);
+        return ret;
+    }
+
     /**
      * Create an ndarray of zeros
      *
