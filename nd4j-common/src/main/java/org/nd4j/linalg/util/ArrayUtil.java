@@ -220,6 +220,14 @@ public class ArrayUtil {
         return ret;
     }
 
+    public static short[] toHalfs(long[] data) {
+        short[] ret = new short[data.length];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = fromFloat((float) data[i]);
+        }
+        return ret;
+    }
+
     public static short[] toHalfs(double[] data) {
         short[] ret = new short[data.length];
         for (int i = 0; i < ret.length; i++) {
@@ -2166,6 +2174,13 @@ public class ArrayUtil {
     }
 
     public static double[] toDouble(int[] data) {
+        double[] ret = new double[data.length];
+        for (int i = 0; i < ret.length; i++)
+            ret[i] = data[i];
+        return ret;
+    }
+
+    public static double[] toDouble(long[] data) {
         double[] ret = new double[data.length];
         for (int i = 0; i < ret.length; i++)
             ret[i] = data[i];

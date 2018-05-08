@@ -231,7 +231,7 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
     @Override
     public INDArray create(DataBuffer data, long rows, long columns, int[] stride, long offset) {
         // FIXME: int cast
-        return new JCublasNDArray(data, new long[] {rows, columns}, ArrayUtil.toLongArray(stride), offset);
+        return new JCublasNDArray(data, new long[] {rows, columns}, ArrayUtil.toLongArray(stride), offset, Nd4j.order());
     }
 
     @Override
@@ -299,6 +299,11 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
 
     @Override
     public INDArray create(double[] data, int[] shape, char ordering) {
+        return new JCublasNDArray(data, shape, ordering);
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, char ordering) {
         return new JCublasNDArray(data, shape, ordering);
     }
 
@@ -793,6 +798,12 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         return pullRows(source, sourceDimension, indexes, Nd4j.order());
     }
 
+    @Override
+    public INDArray pullRows(INDArray source, int sourceDimension, long[] indexes) {
+        // FIXME: int cast
+        return pullRows(source, sourceDimension, ArrayUtil.toInts(indexes));
+    }
+
     /**
      * This method produces concatenated array, that consist from tensors, fetched from source array, against some dimension and specified indexes
      *
@@ -1181,7 +1192,7 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
 
         val map = ArrayUtil.buildInterleavedVector(rnd, numTads);
 
-        CudaIntDataBuffer shuffle = new CudaLongDataBuffer(map);
+        CudaLongDataBuffer shuffle = new CudaLongDataBuffer(map);
 
         Pointer shuffleMap = allocator.getPointer(shuffle, context);
 
@@ -1732,6 +1743,98 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
 
         return x;
     }
+
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long[] stride, long offset) {
+        return new JCublasNDArray(data, shape, stride, offset, Nd4j.order());
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, long[] stride, long offset) {
+        return new JCublasNDArray(data, shape, stride, offset, Nd4j.order());
+    }
+
+    @Override
+    public INDArray create(DataBuffer data, long[] shape) {
+        return new JCublasNDArray(data, shape);
+    }
+
+    @Override
+    public INDArray create(DataBuffer data, long[] shape, long[] stride, long offset) {
+        return new JCublasNDArray(data, shape, stride, offset, Nd4j.order());
+    }
+
+    @Override
+    public INDArray create(List<INDArray> list, long[] shape) {
+        return new JCublasNDArray(list, shape);
+    }
+
+    @Override
+    public INDArray create(long rows, long columns, long[] stride, long offset) {
+        return create(new long[] {rows, columns}, stride, offset, Nd4j.order());
+    }
+
+    @Override
+    public INDArray create(long[] shape, char ordering) {
+        return new JCublasNDArray(shape, 0, ordering);
+    }
+
+    @Override
+    public INDArray createUninitialized(long[] shape, char ordering) {
+        return new JCublasNDArray(shape, Nd4j.getStrides(shape, ordering), 0, ordering, false);
+    }
+
+    @Override
+    public INDArray createUninitializedDetached(long[] shape, char ordering) {
+        MemoryWorkspace workspace = Nd4j.getMemoryManager().getCurrentWorkspace();
+        Nd4j.getMemoryManager().setCurrentWorkspace(null);
+        INDArray ret = new JCublasNDArray(shape, Nd4j.getStrides(shape, ordering), 0, ordering, false);
+        Nd4j.getMemoryManager().setCurrentWorkspace(workspace);
+        return ret;
+    }
+
+    @Override
+    public INDArray create(DataBuffer data, long[] newShape, long[] newStride, long offset, char ordering) {
+        return new JCublasNDArray(data, newShape, newStride, offset, ordering);
+    }
+
+    @Override
+    public INDArray create(List<INDArray> list, long[] shape, char ordering) {
+        return new JCublasNDArray(list, shape, ordering);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long[] stride, char order, long offset) {
+        return new JCublasNDArray(data, shape, stride, offset, order);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long[] stride, long offset, char ordering) {
+        return new JCublasNDArray(data, shape, stride, offset, ordering);
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, long[] stride, long offset, char ordering) {
+        return new JCublasNDArray(data, shape, stride, offset, ordering);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long offset, Character order) {
+        return new JCublasNDArray(data, shape, Nd4j.getStrides(shape, order), offset, order);
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, long offset, Character order) {
+        return new JCublasNDArray(data, shape, Nd4j.getStrides(shape, order), offset, order);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, char ordering) {
+        return new JCublasNDArray(data, shape, Nd4j.getStrides(shape, order), 0, ordering);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public INDArray createSparseCSR(double[] data, int[] columns, int[] pointerB, int[] pointerE, int[] shape) {
         throw new UnsupportedOperationException();

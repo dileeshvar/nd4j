@@ -314,6 +314,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         this(shape, Nd4j.getStrides(shape, ordering), offset, ordering);
     }
 
+    public BaseNDArray(long[] shape, long offset, char ordering) {
+        this(shape, Nd4j.getStrides(shape, ordering), offset, ordering);
+    }
+
 
     /**
      * Create an ndarray
@@ -321,6 +325,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param shape
      */
     public BaseNDArray(int[] shape) {
+        this(shape, 0, Nd4j.order());
+    }
+
+    public BaseNDArray(long[] shape) {
         this(shape, 0, Nd4j.order());
     }
 
@@ -551,6 +559,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     }
 
     public BaseNDArray(double[] data, long[] shape, char ordering) {
+        this(Nd4j.createBuffer(data), shape, ordering);
+    }
+
+    public BaseNDArray(float[] data, long[] shape, char ordering) {
         this(Nd4j.createBuffer(data), shape, ordering);
     }
 

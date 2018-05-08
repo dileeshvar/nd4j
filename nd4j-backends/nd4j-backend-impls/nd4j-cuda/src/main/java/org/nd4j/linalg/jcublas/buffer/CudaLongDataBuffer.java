@@ -128,6 +128,10 @@ public class CudaLongDataBuffer extends BaseCudaDataBuffer {
         super(data);
     }
 
+    public CudaLongDataBuffer(long[] data) {
+        super(data);
+    }
+
     public CudaLongDataBuffer(int[] data, boolean copy) {
         super(data, copy);
     }
