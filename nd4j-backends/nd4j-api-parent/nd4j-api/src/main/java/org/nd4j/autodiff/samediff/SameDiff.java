@@ -6151,7 +6151,7 @@ public class SameDiff {
             extras[e] = ((Number) node.getExtraArgs()[e]).floatValue();
         }
 
-        int[] extraBits = null;
+        long[] extraBits = null;
         if (node.opType() == Op.Type.CUSTOM) {
             DynamicCustomOp dynamicCustomOp = (DynamicCustomOp) node;
             extraBits = dynamicCustomOp.iArgs();
@@ -6161,9 +6161,9 @@ public class SameDiff {
             if (!framesMap.containsKey(frameName))
                 framesMap.put(frameName, idCounter.incrementAndGet());
 
-            extraBits = new int[]{framesMap.get(frameName).intValue()};
+            extraBits = new long[]{framesMap.get(frameName).intValue()};
         } else
-            extraBits = new int[]{};
+            extraBits = new long[]{};
 
         val inPaired = new ArrayList<Integer>();
 
