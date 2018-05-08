@@ -1889,6 +1889,9 @@ public class Shape {
         return newStrides[newShapeRank - 1];
     }
 
+    public static INDArray newShapeNoCopy(INDArray arr, int[] newShape, boolean isFOrder) {
+        return newShapeNoCopy(arr, ArrayUtil.toLongArray(newShape), isFOrder);
+    }
     /**
      * A port of numpy's reshaping algorithm that leverages
      * no copy where possible and returns

@@ -566,6 +566,11 @@ public class BaseSparseNDArrayCOO extends BaseSparseNDArray {
         return ret;
     }
 
+    @Override
+    public INDArray repeat(int dimension, long... repeats) {
+        return null;
+    }
+
 
     public int[] filterOutFixedDimensions(int[] flags, List<Integer> idx) {
         checkArgument(flags.length == idx.size());
@@ -690,6 +695,16 @@ public class BaseSparseNDArrayCOO extends BaseSparseNDArray {
     @Override
     public float getFloat(long i, long j) {
         return (float) getDouble(i, j);
+    }
+
+    @Override
+    public INDArray reshape(char order, int... newShape) {
+        return null;
+    }
+
+    @Override
+    public INDArray reshape(int[] shape) {
+        return null;
     }
 
     public SparseFormat getFormat() {

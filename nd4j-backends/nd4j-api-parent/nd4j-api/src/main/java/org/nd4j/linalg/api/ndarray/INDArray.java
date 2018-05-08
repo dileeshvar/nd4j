@@ -1512,6 +1512,8 @@ public interface INDArray extends Serializable {
      */
     int[] toIntVector();
 
+    long[] toLongVector();
+
 
     /**
      * Convert this ndarray to a 2d int matrix.
@@ -2289,6 +2291,7 @@ public interface INDArray extends Serializable {
      */
     INDArray reshape(long... newShape);
 
+    INDArray reshape(int[] shape);
 
     /**
      * Reshapes the ndarray (can't change the length of the ndarray). Typically this will be a view, unless reshaping
@@ -2373,7 +2376,7 @@ public interface INDArray extends Serializable {
      * @return the newly permuted array
      */
     INDArray dimShuffle(Object[] rearrange, int[] newOrder, boolean[] broadCastable);
-
+    INDArray dimShuffle(Object[] rearrange, long[] newOrder, boolean[] broadCastable);
 
 
     /**

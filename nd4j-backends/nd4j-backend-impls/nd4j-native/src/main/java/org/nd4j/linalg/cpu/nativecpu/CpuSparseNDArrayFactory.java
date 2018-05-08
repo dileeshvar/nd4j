@@ -587,4 +587,24 @@ public class CpuSparseNDArrayFactory extends BaseSparseNDArrayFactory {
 
         return array;
     }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long offset, Character order) {
+        return null;
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, long offset, Character order) {
+        return null;
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, char ordering) {
+        return null;
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, char ordering) {
+        return null;
+    }
 }

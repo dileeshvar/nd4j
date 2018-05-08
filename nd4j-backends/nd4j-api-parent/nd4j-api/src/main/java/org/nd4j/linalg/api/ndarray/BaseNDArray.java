@@ -3386,6 +3386,14 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     }
 
     @Override
+    public long[] toLongVector() {
+        if(!isVector()) {
+            throw new ND4JIllegalStateException("Unable to create a 1d array from a non vector!");
+        }
+        return dup().data().asLong();
+    }
+
+    @Override
     public int[][] toIntMatrix() {
         if(!isMatrix()) {
             throw new ND4JIllegalStateException("Unable to create a 2d array from a non matrix!");
@@ -4468,6 +4476,12 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param shape the shape of the ndarray.
      * @return the new reshaped nd array
      */
+
+    @Override
+    public INDArray reshape(int[] shape) {
+        return reshape(Nd4j.order(), shape);
+    }
+
     @Override
     public INDArray reshape(long... shape) {
         return reshape(Nd4j.order(), shape);
@@ -5240,6 +5254,11 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
     }
 
+    @Override
+    public INDArray dimShuffle(Object[] rearrange, int[] newOrder, boolean[] broadCastable) {
+        // FIXME: int cast
+        return dimShuffle(rearrange, ArrayUtil.toLongArray(newOrder), broadCastable);
+    }
 
     /**
      * Dimshuffle: an extension of permute that adds the ability
@@ -5254,7 +5273,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @return the newly permuted array
      */
     @Override
-    public INDArray dimShuffle(Object[] rearrange, int[] newOrder, boolean[] broadCastable) {
+    public INDArray dimShuffle(Object[] rearrange, long[] newOrder, boolean[] broadCastable) {
         Nd4j.getCompressor().autoDecompress(this);
 
         if (broadCastable.length != Shape.rank(javaShapeInformation))

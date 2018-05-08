@@ -1632,6 +1632,11 @@ public abstract class BaseSparseNDArray implements ISparseNDArray {
     }
 
     @Override
+    public INDArray dimShuffle(Object[] rearrange, long[] newOrder, boolean[] broadCastable) {
+        return null;
+    }
+
+    @Override
     public INDArray getColumn(int i) {
         return null;
     }
