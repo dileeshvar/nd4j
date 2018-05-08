@@ -2643,7 +2643,7 @@ public class Nd4j {
      * @param shapeInfo
      * @return
      */
-    public static INDArray createArrayFromShapeBuffer(DataBuffer data, Pair<DataBuffer, int[]> shapeInfo) {
+    public static INDArray createArrayFromShapeBuffer(DataBuffer data, Pair<DataBuffer, long[]> shapeInfo) {
         int rank = Shape.rank(shapeInfo.getFirst());
         long offset = Shape.offset(shapeInfo.getFirst());
         INDArray result = Nd4j.create(data, toIntArray(rank, Shape.shapeOf(shapeInfo.getFirst())),

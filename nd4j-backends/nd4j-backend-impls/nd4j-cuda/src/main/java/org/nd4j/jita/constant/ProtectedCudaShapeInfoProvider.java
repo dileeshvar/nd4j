@@ -48,7 +48,7 @@ public class ProtectedCudaShapeInfoProvider extends BaseShapeInfoProvider {
     }
 
     @Override
-    public Pair<DataBuffer, int[]> createShapeInformation(int[] shape, int[] stride, long offset, int elementWiseStride, char order) {
+    public Pair<DataBuffer, long[]> createShapeInformation(int[] shape, int[] stride, long offset, int elementWiseStride, char order) {
         // We enforce offset to 0 in shapeBuffer, since we need it for cache efficiency + we don't actually use offset value @ native side
         offset = 0;
 
@@ -57,7 +57,7 @@ public class ProtectedCudaShapeInfoProvider extends BaseShapeInfoProvider {
         ShapeDescriptor descriptor = new ShapeDescriptor(shape, stride, offset, elementWiseStride, order);
 
         if (!protector.containsDataBuffer(deviceId, descriptor)) {
-            Pair<DataBuffer, int[]> buffer = null;
+            Pair<DataBuffer, long[]> buffer = null;
             synchronized (this) {
                 if (!protector.containsDataBuffer(deviceId, descriptor)) {
                     //log.info("Cache miss: {}", descriptor);

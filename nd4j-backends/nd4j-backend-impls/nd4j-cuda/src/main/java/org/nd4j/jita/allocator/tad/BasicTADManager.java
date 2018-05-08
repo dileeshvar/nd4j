@@ -1,5 +1,6 @@
 package org.nd4j.jita.allocator.tad;
 
+import org.bytedeco.javacpp.LongPointer;
 import org.nd4j.linalg.primitives.Pair;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.Pointer;
@@ -68,8 +69,8 @@ public class BasicTADManager implements TADManager {
         Pointer targetPointer = AddressRetriever.retrieveHostPointer(outputBuffer);
         Pointer offsetsPointer = AddressRetriever.retrieveHostPointer(offsetsBuffer);
         if(!isScalar)
-            nativeOps.tadOnlyShapeInfo((IntPointer) xShapeInfo, (IntPointer) dimensionPointer, dimension.length,
-                    (IntPointer) targetPointer, new LongPointerWrapper(offsetsPointer));
+            nativeOps.tadOnlyShapeInfo((LongPointer) xShapeInfo, (IntPointer) dimensionPointer, dimension.length,
+                    (LongPointer) targetPointer, new LongPointerWrapper(offsetsPointer));
 
         else  {
             outputBuffer.put(0,2);

@@ -19,7 +19,9 @@
 
 package org.nd4j.linalg.jcublas;
 
+import lombok.val;
 import org.nd4j.linalg.compression.CompressionUtils;
+import org.nd4j.linalg.jcublas.buffer.CudaLongDataBuffer;
 import org.nd4j.linalg.primitives.Pair;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.indexer.*;
@@ -221,13 +223,15 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
     }
 
     @Override
-    public IComplexNDArray createComplex(DataBuffer data, int rows, int columns, int[] stride, long offset) {
-        return new JCublasComplexNDArray(data, new int[] {rows, columns}, stride, offset);
+    public IComplexNDArray createComplex(DataBuffer data, long rows, long columns, int[] stride, long offset) {
+        //return new JCublasComplexNDArray(data, new int[] {rows, columns}, stride, offset);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public INDArray create(DataBuffer data, int rows, int columns, int[] stride, long offset) {
-        return new JCublasNDArray(data, new int[] {rows, columns}, stride, offset);
+    public INDArray create(DataBuffer data, long rows, long columns, int[] stride, long offset) {
+        // FIXME: int cast
+        return new JCublasNDArray(data, new long[] {rows, columns}, ArrayUtil.toLongArray(stride), offset);
     }
 
     @Override
@@ -289,8 +293,8 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
     }
 
     @Override
-    public INDArray create(float[] data, int rows, int columns, int[] stride, long offset, char ordering) {
-        return new JCublasNDArray(data, new int[] {rows, columns}, stride, offset, ordering);
+    public INDArray create(float[] data, long rows, long columns, int[] stride, long offset, char ordering) {
+        return new JCublasNDArray(data, new long[] {rows, columns}, ArrayUtil.toLongArray(stride), offset, ordering);
     }
 
     @Override
@@ -538,21 +542,21 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
                 if (m.data().dataType() == DataBuffer.Type.DOUBLE) {
                     nativeOps.flattenDouble(extras, linearIndex, order,
                                     (DoublePointer) allocator.getPointer(ret, context),
-                                    (IntPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
+                                    (LongPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
                                     (DoublePointer) allocator.getPointer(m, context),
-                                    (IntPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
+                                    (LongPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
                 } else if (m.data().dataType() == DataBuffer.Type.FLOAT) {
                     nativeOps.flattenFloat(extras, linearIndex, order,
                                     (FloatPointer) allocator.getPointer(ret, context),
-                                    (IntPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
+                                    (LongPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
                                     (FloatPointer) allocator.getPointer(m, context),
-                                    (IntPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
+                                    (LongPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
 
                 } else {
                     nativeOps.flattenHalf(extras, linearIndex, order, (ShortPointer) allocator.getPointer(ret, context),
-                                    (IntPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
+                                    (LongPointer) allocator.getPointer(ret.shapeInfoDataBuffer(), context),
                                     (ShortPointer) allocator.getPointer(m, context),
-                                    (IntPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
+                                    (LongPointer) allocator.getPointer(m.shapeInfoDataBuffer(), context));
                 }
 
 
@@ -589,7 +593,7 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
             sumAlongDim += toConcat[i].size(dimension);
         }
 
-        int[] outputShape = ArrayUtil.copy(toConcat[0].shape());
+        val outputShape = ArrayUtil.copy(toConcat[0].shape());
 
         outputShape[dimension] = sumAlongDim;
 
@@ -677,18 +681,18 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (ret.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.concatDouble(extras, dimension, toConcat.length, new PointerPointer(new Pointer[] {dataPointer}),
                             new PointerPointer(new Pointer[] {shapesPointer}), (DoublePointer) dZ,
-                            (IntPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
+                            (LongPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
                             new PointerPointer(new Pointer[] {offsetPointer}));
         } else if (ret.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.concatFloat(extras, dimension, toConcat.length, new PointerPointer(new Pointer[] {dataPointer}),
                             new PointerPointer(new Pointer[] {shapesPointer}), (FloatPointer) dZ,
-                            (IntPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
+                            (LongPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
                             new PointerPointer(new Pointer[] {offsetPointer}));
 
         } else {
             nativeOps.concatHalf(extras, dimension, toConcat.length, new PointerPointer(new Pointer[] {dataPointer}),
                             new PointerPointer(new Pointer[] {shapesPointer}), (ShortPointer) dZ,
-                            (IntPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
+                            (LongPointer) dZShapeInfo, new PointerPointer(new Pointer[] {tadPointer}),
                             new PointerPointer(new Pointer[] {offsetPointer}));
 
         }
@@ -717,7 +721,7 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
 
         int sumAlongDim = 0;
 
-        int[] outputShape = ArrayUtil.copy(toConcat[0].shape());
+        val outputShape = ArrayUtil.copy(toConcat[0].shape());
 
 
         for (int i = 0; i < toConcat.length; i++) {
@@ -745,18 +749,18 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (ret.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.specialConcatDouble(dummy, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (DoublePointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     new PointerPointer(new Pointer[] {null}), new PointerPointer(new Pointer[] {null}));
         } else if (ret.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.specialConcatFloat(dummy, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (FloatPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     new PointerPointer(new Pointer[] {null}), new PointerPointer(new Pointer[] {null}));
 
         } else if (ret.data().dataType() == DataBuffer.Type.HALF) {
             nativeOps.specialConcatHalf(dummy, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (ShortPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     new PointerPointer(new Pointer[]{null}), new PointerPointer(new Pointer[]{null}));
         } else {
             throw new ND4JIllegalStateException("Unknown dataType: " + ret.data().dataType());
@@ -802,11 +806,11 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (indexes == null || indexes.length < 1)
             throw new IllegalStateException("Indexes can't be null or zero-length");
 
-        int[] shape;
+        long[] shape;
         if (sourceDimension == 1)
-            shape = new int[] {indexes.length, source.shape()[sourceDimension]};
+            shape = new long[] {indexes.length, source.shape()[sourceDimension]};
         else if (sourceDimension == 0)
-            shape = new int[] {source.shape()[sourceDimension], indexes.length};
+            shape = new long[] {source.shape()[sourceDimension], indexes.length};
         else
             throw new UnsupportedOperationException("2D input is expected");
 
@@ -821,11 +825,11 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (indexes == null || indexes.length < 1)
             throw new IllegalStateException("Indexes can't be null or zero-length");
 
-        int[] shape = null;
+        long[] shape = null;
         if (sourceDimension == 1)
-            shape = new int[] {indexes.length, source.shape()[sourceDimension]};
+            shape = new long[] {indexes.length, source.shape()[sourceDimension]};
         else if (sourceDimension == 0)
-            shape = new int[] {source.shape()[sourceDimension], indexes.length};
+            shape = new long[] {source.shape()[sourceDimension], indexes.length};
         else
             throw new UnsupportedOperationException("2D input is expected");
 
@@ -869,17 +873,17 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         Pointer zTadOffsets = AtomicAllocator.getInstance().getPointer(zTadBuffers.getSecond(), context);
 
         if (ret.data().dataType() == DataBuffer.Type.DOUBLE) {
-            nativeOps.pullRowsDouble(extras, (DoublePointer) x, (IntPointer) xShape, (DoublePointer) z,
-                    (IntPointer) zShape, indexes.length, (IntPointer) pIndex, (IntPointer) tadShapeInfo,
-                    new LongPointerWrapper(tadOffsets), (IntPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
+            nativeOps.pullRowsDouble(extras, (DoublePointer) x, (LongPointer) xShape, (DoublePointer) z,
+                    (LongPointer) zShape, indexes.length, (LongPointer) pIndex, (LongPointer) tadShapeInfo,
+                    new LongPointerWrapper(tadOffsets), (LongPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
         } else if (ret.data().dataType() == DataBuffer.Type.FLOAT) {
-            nativeOps.pullRowsFloat(extras, (FloatPointer) x, (IntPointer) xShape, (FloatPointer) z,
-                    (IntPointer) zShape, indexes.length, (IntPointer) pIndex, (IntPointer) tadShapeInfo,
-                    new LongPointerWrapper(tadOffsets), (IntPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
+            nativeOps.pullRowsFloat(extras, (FloatPointer) x, (LongPointer) xShape, (FloatPointer) z,
+                    (LongPointer) zShape, indexes.length, (LongPointer) pIndex, (LongPointer) tadShapeInfo,
+                    new LongPointerWrapper(tadOffsets), (LongPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
         } else {
-            nativeOps.pullRowsHalf(extras, (ShortPointer) x, (IntPointer) xShape, (ShortPointer) z, (IntPointer) zShape,
-                    indexes.length, (IntPointer) pIndex, (IntPointer) tadShapeInfo, new LongPointerWrapper(tadOffsets),
-                    (IntPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
+            nativeOps.pullRowsHalf(extras, (ShortPointer) x, (LongPointer) xShape, (ShortPointer) z, (LongPointer) zShape,
+                    indexes.length, (LongPointer) pIndex, (LongPointer) tadShapeInfo, new LongPointerWrapper(tadOffsets),
+                    (LongPointer) zTadShapeInfo, new LongPointerWrapper(zTadOffsets));
         }
 
         allocator.registerAction(context, ret, source);
@@ -1173,11 +1177,11 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
             tadLength *= arrays.get(0).shape()[dimensions.get(0)[i]];
         }
 
-        int numTads = arrays.get(0).length() / tadLength;
+        val numTads = arrays.get(0).length() / tadLength;
 
-        int[] map = ArrayUtil.buildInterleavedVector(rnd, numTads);
+        val map = ArrayUtil.buildInterleavedVector(rnd, numTads);
 
-        CudaIntDataBuffer shuffle = new CudaIntDataBuffer(map);
+        CudaIntDataBuffer shuffle = new CudaLongDataBuffer(map);
 
         Pointer shuffleMap = allocator.getPointer(shuffle, context);
 
@@ -1539,7 +1543,7 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         Pair<DataBuffer, DataBuffer> tadBuffers = Nd4j.getExecutioner().getTADManager().getTADOnlyShapeInfo(tensor, dimensions);
 
         long tadLength = 1;
-        int[] shape = new int[dimensions.length];
+        val shape = new long[dimensions.length];
         for (int i = 0; i < dimensions.length; i++) {
             tadLength *= tensor.shape()[dimensions[i]];
             shape[i] = tensor.shape()[dimensions[i]];
@@ -1571,28 +1575,28 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (Nd4j.dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.tearDouble(extraz,
                     (DoublePointer) AtomicAllocator.getInstance().getPointer(tensor, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
                     new PointerPointer(AtomicAllocator.getInstance().getPointer(tempX, context)),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context))
             );
         } else if (Nd4j.dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.tearFloat(extraz,
                     (FloatPointer) AtomicAllocator.getInstance().getPointer(tensor, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
                     new PointerPointer(AtomicAllocator.getInstance().getPointer(tempX, context)),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context))
             );
         } else if (Nd4j.dataType() == DataBuffer.Type.HALF) {
             nativeOps.tearHalf(extraz,
                     (ShortPointer) AtomicAllocator.getInstance().getPointer(tensor, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tensor.shapeInfoDataBuffer(), context),
                     new PointerPointer(AtomicAllocator.getInstance().getPointer(tempX, context)),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(result[0].shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context))
             );
         }
@@ -1646,19 +1650,19 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (x.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.sortFloat(extraz,
                     (FloatPointer) AtomicAllocator.getInstance().getPointer(tmpX, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
                     descending
                     );
         } else if (x.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.sortDouble(extraz,
                     (DoublePointer) AtomicAllocator.getInstance().getPointer(tmpX, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
                     descending
             );
         } else if (x.data().dataType() == DataBuffer.Type.HALF) {
             nativeOps.sortHalf(extraz,
                     (ShortPointer) AtomicAllocator.getInstance().getPointer(tmpX, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tmpX.shapeInfoDataBuffer(), context),
                     descending
             );
         } else {
@@ -1693,30 +1697,30 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         if (x.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.sortTadFloat(extraz,
                     (FloatPointer) AtomicAllocator.getInstance().getPointer(x, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
                     (IntPointer) dimensionPointer,
                     dimension.length,
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context)),
                     descending
             );
         } else if (x.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.sortTadDouble(extraz,
                     (DoublePointer) AtomicAllocator.getInstance().getPointer(x, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
                     (IntPointer) dimensionPointer,
                     dimension.length,
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context)),
                     descending
             );
         } else if (x.data().dataType() == DataBuffer.Type.HALF) {
             nativeOps.sortTadHalf(extraz,
                     (ShortPointer) AtomicAllocator.getInstance().getPointer(x, context),
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(x.shapeInfoDataBuffer(), context),
                     (IntPointer) dimensionPointer,
                     dimension.length,
-                    (IntPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
+                    (LongPointer) AtomicAllocator.getInstance().getPointer(tadBuffers.getFirst(), context),
                     new LongPointerWrapper(AtomicAllocator.getInstance().getPointer(tadBuffers.getSecond(), context)),
                     descending
             );
