@@ -52,15 +52,18 @@ public class AdaGrad implements Serializable {
         return inputSize;
     }
 
-
     public void setStateViewArray(INDArray viewArray, int[] gradientShape, char gradientOrder, boolean initialize) {
+        setStateViewArray(viewArray, ArrayUtil.toLongArray(gradientShape), gradientOrder, initialize);
+    }
+
+    public void setStateViewArray(INDArray viewArray, long[] gradientShape, char gradientOrder, boolean initialize) {
         if (!viewArray.isRowVector())
             throw new IllegalArgumentException("Invalid input: expect row vector input");
         if (initialize)
             viewArray.assign(epsilon);
         this.historicalGradient = viewArray;
         //Reshape to match the expected shape of the input gradient arrays
-        this.historicalGradient = Shape.newShapeNoCopy(this.historicalGradient, ArrayUtil.toLongArray(gradientShape), gradientOrder == 'f');
+        this.historicalGradient = Shape.newShapeNoCopy(this.historicalGradient, gradientShape, gradientOrder == 'f');
         if (historicalGradient == null)
             throw new IllegalStateException("Could not correctly reshape gradient view array");
 

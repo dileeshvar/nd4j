@@ -1439,7 +1439,7 @@ public interface IComplexNDArray extends INDArray {
      * @return the specified column
      */
     @Override
-    IComplexNDArray getColumn(int i);
+    IComplexNDArray getColumn(long i);
 
     /**
      * Returns the specified row.
@@ -1449,7 +1449,7 @@ public interface IComplexNDArray extends INDArray {
      * @return the specified row
      */
     @Override
-    IComplexNDArray getRow(int i);
+    IComplexNDArray getRow(long i);
 
 
     /**

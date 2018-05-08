@@ -539,7 +539,8 @@ public class OpExecutionerTests extends BaseNd4jTest {
         OpExecutioner opExecutioner = Nd4j.getExecutioner();
         INDArray arr = Nd4j.linspace(1, 6, 6).reshape(2, 3);
         INDArray slice = arr.slice(0);
-        float[] expected = new float[slice.length()];
+        // FIXME: int cast
+        float[] expected = new float[(int) slice.length()];
         for (int i = 0; i < slice.length(); i++)
             expected[i] = (float) Math.exp(slice.getDouble(i));
         Exp exp = new Exp(slice);

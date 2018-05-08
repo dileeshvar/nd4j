@@ -228,11 +228,12 @@ public abstract class BaseDistribution implements Distribution {
      * {@link #sample()} in a loop.
      */
     @Override
-    public double[] sample(int sampleSize) {
+    public double[] sample(long sampleSize) {
         if (sampleSize <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES, sampleSize);
         }
-        double[] out = new double[sampleSize];
+        // FIXME: int cast
+        double[] out = new double[(int) sampleSize];
         for (int i = 0; i < sampleSize; i++) {
             out[i] = sample();
         }

@@ -385,6 +385,10 @@ public class NDArrayIndex implements INDArrayIndex {
      * for a particular dimension otherwise)
      */
     public static INDArrayIndex[] resolve(int[] shape, INDArrayIndex... intendedIndexes) {
+        return resolve(ArrayUtil.toLongArray(shape), intendedIndexes);
+    }
+
+    public static INDArrayIndex[] resolve(long[] shape, INDArrayIndex... intendedIndexes) {
         /**
          * If it's a vector and index asking for a scalar just return the array
          */
@@ -392,7 +396,7 @@ public class NDArrayIndex implements INDArrayIndex {
             if (Shape.isRowVectorShape(shape) && intendedIndexes.length == 1) {
                 INDArrayIndex[] ret = new INDArrayIndex[2];
                 ret[0] = NDArrayIndex.point(0);
-                int size;
+                long size;
                 if (1 == shape[0] && shape.length == 2)
                     size = shape[1];
                 else

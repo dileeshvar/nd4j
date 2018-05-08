@@ -3319,7 +3319,7 @@ public abstract class BaseComplexNDArray extends BaseNDArray implements IComplex
      * @param c
      */
     @Override
-    public IComplexNDArray getColumn(int c) {
+    public IComplexNDArray getColumn(long c) {
         return (IComplexNDArray) super.getColumn(c);
 
     }
@@ -3331,7 +3331,7 @@ public abstract class BaseComplexNDArray extends BaseNDArray implements IComplex
      * @param r
      */
     @Override
-    public IComplexNDArray getRow(int r) {
+    public IComplexNDArray getRow(long r) {
         return (IComplexNDArray) super.getRow(r);
 
 

@@ -162,6 +162,11 @@ public abstract class BaseSparseNDArray implements ISparseNDArray {
     }
 
     @Override
+    public long[] toLongVector() {
+        return new long[0];
+    }
+
+    @Override
     public int[][] toIntMatrix() {
         return new int[0][];
     }
@@ -1637,12 +1642,12 @@ public abstract class BaseSparseNDArray implements ISparseNDArray {
     }
 
     @Override
-    public INDArray getColumn(int i) {
+    public INDArray getColumn(long i) {
         return null;
     }
 
     @Override
-    public INDArray getRow(int i) {
+    public INDArray getRow(long i) {
         return null;
     }
 

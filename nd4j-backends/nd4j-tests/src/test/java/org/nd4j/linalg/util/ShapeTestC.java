@@ -62,7 +62,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         val result = Shape.getReducedShape(shape, axis, true, true);
 
-        assertArrayEquals(new int[]{1, 1}, result);
+        assertArrayEquals(new long[]{1, 1}, result);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         val result = Shape.getReducedShape(shape, axis, false, true);
 
-        assertArrayEquals(new int[]{}, result);
+        assertArrayEquals(new long[]{}, result);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         val result = Shape.getReducedShape(shape, axis, true, true);
 
-        assertArrayEquals(new int[]{1, 1, 5}, result);
+        assertArrayEquals(new long[]{1, 1, 5}, result);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         val result = Shape.getReducedShape(shape, axis, false, true);
 
-        assertArrayEquals(new int[]{5}, result);
+        assertArrayEquals(new long[]{5}, result);
     }
 
 
@@ -103,7 +103,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         val result = Shape.getReducedShape(shape, axis, true, true);
 
-        assertArrayEquals(new int[]{1, 1}, result);
+        assertArrayEquals(new long[]{1, 1}, result);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         log.info("Result: {}", result);
 
-        assertArrayEquals(new int[]{1}, result);
+        assertArrayEquals(new long[]{1}, result);
     }
 
 
@@ -128,7 +128,7 @@ public class ShapeTestC extends BaseNd4jTest {
 
         log.info("Result: {}", result);
 
-        assertArrayEquals(new int[]{4}, result);
+        assertArrayEquals(new long[]{4}, result);
     }
 
 

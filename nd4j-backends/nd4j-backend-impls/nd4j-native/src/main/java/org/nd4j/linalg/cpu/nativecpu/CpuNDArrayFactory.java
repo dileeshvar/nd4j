@@ -1391,7 +1391,7 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
         INDArray ret = Nd4j.create(data,
                 Shape.shape(shapeBuffer),
                 Shape.strideArr(shapeBuffer),
-                Shape.offset(shapeBuffer),
+                0,
                 Shape.order(shapeBuffer));
 
         return ret;

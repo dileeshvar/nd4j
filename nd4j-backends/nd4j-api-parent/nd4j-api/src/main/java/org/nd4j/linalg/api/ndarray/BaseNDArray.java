@@ -953,8 +953,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         Pair<DataBuffer, DataBuffer> tadInfo =
                 Nd4j.getExecutioner().getTADManager().getTADOnlyShapeInfo(this, dimension);
         DataBuffer shapeInfo = tadInfo.getFirst();
-        int[] shape = Shape.shape(shapeInfo);
-        int[] stride = Shape.stride(shapeInfo).asInt();
+        val shape = Shape.shape(javaShapeInformation);
+        val stride = Shape.stride(javaShapeInformation);
         long offset = offset() + tadInfo.getSecond().getLong(index);
         INDArray toTad = Nd4j.create(data(), shape, stride, offset);
         BaseNDArray baseNDArray = (BaseNDArray) toTad;
@@ -4796,7 +4796,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param c
      */
     @Override
-    public INDArray getColumn(int c) {
+    public INDArray getColumn(long c) {
         Nd4j.getCompressor().autoDecompress(this);
 
         if (isColumnVector() && c == 0)
@@ -4940,7 +4940,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param r the row to get
      */
     @Override
-    public INDArray getRow(int r) {
+    public INDArray getRow(long r) {
         if (isRowVector() && r == 0)
             return this;
         else if (isRowVector() && r > 0)

@@ -910,7 +910,11 @@ public class Shape {
      * @param indices             Indices array to get the offset for (must be same length as array rank)
      * @return                    Buffer offset fo the specified indices
      */
-    public static long getOffset(DataBuffer shapeInformation, int... indices) {
+    public static long getOffset(DataBuffer shapeInformation, int[] indices) {
+        // FIXME: int cast
+        return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
+    }
+    public static long getOffset(DataBuffer shapeInformation, long... indices) {
         int rank = rank(shapeInformation);
         if (indices.length != rank)
             throw new IllegalArgumentException("Indexes must be same length as array rank");
@@ -2582,8 +2586,8 @@ public class Shape {
      * @param buffer    Buffer to get the shape from
      * @return          Shape array
      */
-    public static int[] shape(IntBuffer buffer) {
-        int[] ret = new int[rank(buffer)];
+    public static long[] shape(IntBuffer buffer) {
+        val ret = new long[rank(buffer)];
         for (int i = 0; i < ret.length; i++)
             ret[i] = buffer.get(1 + i);
         return ret;
@@ -2594,8 +2598,8 @@ public class Shape {
      * @param buffer    Buffer to get the shape from
      * @return          Shape array
      */
-    public static int[] shape(DataBuffer buffer) {
-        int[] ret = new int[rank(buffer)];
+    public static long[] shape(DataBuffer buffer) {
+        val ret = new long[rank(buffer)];
         for (int i = 0; i < ret.length; i++)
             ret[i] = buffer.getInt(1 + i);
         return ret;
@@ -2665,8 +2669,8 @@ public class Shape {
      * @param buffer    Buffer to get the shape from
      * @return          Shape array
      */
-    public static int[] strideArr(DataBuffer buffer) {
-        int[] ret = new int[rank(buffer)];
+    public static long[] strideArr(DataBuffer buffer) {
+        val ret = new long[rank(buffer)];
         DataBuffer stride = Shape.stride(buffer);
         for (int i = 0; i < ret.length; i++)
             ret[i] = stride.getInt(i);

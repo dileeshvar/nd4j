@@ -2386,7 +2386,7 @@ public interface INDArray extends Serializable {
      * @param i the column to getScalar
      * @return the specified column
      */
-    INDArray getColumn(int i);
+    INDArray getColumn(long i);
 
     /**
      * Returns the specified row.
@@ -2395,7 +2395,7 @@ public interface INDArray extends Serializable {
      * @param i the row to getScalar
      * @return the specified row
      */
-    INDArray getRow(int i);
+    INDArray getRow(long i);
 
     /**
      * Returns the number of columns in this matrix (throws exception if not 2d)

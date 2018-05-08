@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.nd4j.autodiff.execution.NativeGraphExecutioner;
 import org.nd4j.autodiff.execution.conf.ExecutionMode;
 import org.nd4j.autodiff.execution.conf.ExecutorConfiguration;
@@ -16,11 +18,13 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.graph.FlatGraph;
 import org.nd4j.imports.converters.DifferentialFunctionClassHolder;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
+import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.api.ops.impl.controlflow.If;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.util.HashUtil;
 import org.nd4j.nativeblas.NativeOpsHolder;
@@ -38,13 +42,24 @@ import static org.junit.Assert.*;
 
 
 @Slf4j
-public class TensorFlowImportTest {
+@RunWith(Parameterized.class)
+public class TensorFlowImportTest extends BaseNd4jTest {
     private static ExecutorConfiguration configuration = ExecutorConfiguration.builder()
             .executionMode(ExecutionMode.SEQUENTIAL)
             .profilingMode(OpExecutioner.ProfilingMode.DISABLED)
             .gatherTimings(true)
             .outputMode(OutputMode.IMPLICIT)
             .build();
+
+    public TensorFlowImportTest(Nd4jBackend backend) {
+        super(backend);
+    }
+
+
+    @Override
+    public char ordering() {
+        return 'c';
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -238,7 +253,7 @@ public class TensorFlowImportTest {
         System.out.println(Arrays.toString(shape));
 
         // this is NHWC weights. will be changed soon.
-        assertArrayEquals(new int[]{5,5,1,32},shape);
+        assertArrayEquals(new int[]{5,5,1,32}, shape);
         System.out.println(convNode);
     }
 

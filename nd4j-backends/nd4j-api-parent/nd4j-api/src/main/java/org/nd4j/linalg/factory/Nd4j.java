@@ -5767,6 +5767,10 @@ public class Nd4j {
         return matrix;
     }
 
+    public static INDArray createSparseCOO(double[] data, int[][] indices, long[] shape) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * @param data
      * @param indices

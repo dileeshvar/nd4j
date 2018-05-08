@@ -3,6 +3,7 @@ package org.nd4j.linalg.specials;
 import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.LongPointer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class SortCooTests extends BaseNd4jTest {
 
         log.info("Old indices: {}", Arrays.toString(idx.asInt()));
 
-        NativeOpsHolder.getInstance().getDeviceNativeOps().sortCooIndicesFloat(null, (IntPointer) idx.addressPointer(),
+        NativeOpsHolder.getInstance().getDeviceNativeOps().sortCooIndicesFloat(null, (LongPointer) idx.addressPointer(),
                         (FloatPointer) val.addressPointer(), 4, 3);
 
 
@@ -86,7 +87,7 @@ public class SortCooTests extends BaseNd4jTest {
         DataBuffer idx = Nd4j.getDataBufferFactory().createInt(indices);
         DataBuffer val = Nd4j.createBuffer(values);
 
-        NativeOpsHolder.getInstance().getDeviceNativeOps().sortCooIndicesFloat(null, (IntPointer) idx.addressPointer(),
+        NativeOpsHolder.getInstance().getDeviceNativeOps().sortCooIndicesFloat(null, (LongPointer) idx.addressPointer(),
                         (FloatPointer) val.addressPointer(), 3, 3);
 
         assertArrayEquals(expIndices, idx.asInt());
