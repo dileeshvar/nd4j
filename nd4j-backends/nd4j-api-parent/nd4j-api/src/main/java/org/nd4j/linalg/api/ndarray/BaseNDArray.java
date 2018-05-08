@@ -247,6 +247,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         this(data, shape, Nd4j.getStrides(shape, ordering), offset);
     }
 
+    public BaseNDArray(double[] data, long[] shape, long offset, char ordering) {
+        this(data, shape, Nd4j.getStrides(shape, ordering), offset);
+    }
+
     public BaseNDArray(float[] data, long[] shape, long offset, char ordering) {
         this(data, shape, Nd4j.getStrides(shape, ordering), offset);
     }
@@ -532,6 +536,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         this(buffer, shape, Nd4j.getStrides(shape, ordering), 0, ordering);
     }
 
+    public BaseNDArray(DataBuffer buffer, long[] shape, char ordering) {
+        this(buffer, shape, Nd4j.getStrides(shape, ordering), 0, ordering);
+    }
+
     /**
      *
      * @param data
@@ -539,6 +547,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param ordering
      */
     public BaseNDArray(double[] data, int[] shape, char ordering) {
+        this(Nd4j.createBuffer(data), shape, ordering);
+    }
+
+    public BaseNDArray(double[] data, long[] shape, char ordering) {
         this(Nd4j.createBuffer(data), shape, ordering);
     }
 
@@ -722,6 +734,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
      * @param offset
      */
     public BaseNDArray(float[] data, int[] shape, int[] stride, long offset) {
+        this(data, shape, stride, offset, Nd4j.order());
+    }
+
+    public BaseNDArray(double[] data, long[] shape, long[] stride, long offset) {
         this(data, shape, stride, offset, Nd4j.order());
     }
 
@@ -4199,6 +4215,11 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
     @Override
     public INDArray repeat(int dimension, int... repeats) {
+        return repeat(dimension, ArrayUtil.toLongArray(repeats));
+    }
+
+    @Override
+    public INDArray repeat(int dimension, long... repeats) {
         Nd4j.getCompressor().autoDecompress(this);
 
 
@@ -4207,10 +4228,10 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
         if (repeats.length < rank()) {
             if (dimension > 0)
-                repeats = Ints.concat(ArrayUtil.nTimes(rank() - repeats.length, 1), repeats);
+                repeats = Longs.concat(ArrayUtil.nTimes((long) rank() - repeats.length, 1), repeats);
                 //append rather than prepend for dimension == 0
             else
-                repeats = Ints.concat(repeats, ArrayUtil.nTimes(rank() - repeats.length, 1));
+                repeats = Longs.concat(repeats, ArrayUtil.nTimes((long) rank() - repeats.length, 1));
 
         }
 
@@ -4335,6 +4356,12 @@ public abstract class BaseNDArray implements INDArray, Iterable {
             return Nd4j.createComplex(data, shape, strides, 0, ordering());
         else
             return Nd4j.create(data, shape, strides, 0, ordering());
+    }
+
+    @Override
+    public INDArray reshape(char order, int... newShape) {
+        // FIXME: int cast
+        return reshape(order, ArrayUtil.toLongArray(newShape));
     }
 
     @Override

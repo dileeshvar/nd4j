@@ -2021,9 +2021,9 @@ public class Shape {
      * @param elementStride the element stride to start at
      * @return the storage order given shape and element stride
      */
-    public static boolean cOrFortranOrder(int[] shape, int[] stride, int elementStride) {
-        int sd;
-        int dim;
+    public static boolean cOrFortranOrder(long[] shape, long[] stride, long elementStride) {
+        long sd;
+        long dim;
         int i;
         boolean cContiguous = true;
         boolean isFortran = true;
@@ -2058,9 +2058,12 @@ public class Shape {
             sd *= dim;
 
         }
-
         return cContiguous || isFortran;
+    }
 
+    @Deprecated
+    public static boolean cOrFortranOrder(int[] shape, int[] stride, int elementStride) {
+        return cOrFortranOrder(ArrayUtil.toLongArray(shape), ArrayUtil.toLongArray(stride), elementStride);
     }
 
     /**

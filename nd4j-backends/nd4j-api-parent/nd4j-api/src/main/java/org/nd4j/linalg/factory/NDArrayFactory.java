@@ -1022,6 +1022,9 @@ public interface NDArrayFactory {
      */
     INDArray create(double[] data, int[] shape);
 
+    INDArray create(double[] data, long[] shape);
+    INDArray create(float[] data, long[] shape);
+
     /**
      * Create an ndrray with the specified shape
      *
@@ -1917,6 +1920,11 @@ public interface NDArrayFactory {
     INDArray sort(INDArray x, boolean descending, int... dimensions);
 
     INDArray sortCooIndices(INDArray x);
+
+    INDArray create(float[] data, long[] shape, long offset, Character order);
+    INDArray create(double[] data, long[] shape, long offset, Character order);
+    INDArray create(float[] data, long[] shape, char ordering);
+    INDArray create(double[] data, long[] shape, char ordering);
 
     // =========== Sparse methods ===========
 

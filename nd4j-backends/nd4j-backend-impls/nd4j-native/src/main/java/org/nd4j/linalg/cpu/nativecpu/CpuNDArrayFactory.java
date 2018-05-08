@@ -343,6 +343,11 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
     }
 
     @Override
+    public INDArray create(float[] data, long[] shape, long offset, Character order) {
+        return new NDArray(data, shape, offset, order);
+    }
+
+    @Override
     public INDArray create(float[] data, long rows, long columns, int[] stride, long offset, char ordering) {
         //return new NDArray(data, new int[] {rows, columns}, stride, offset, ordering);
         throw new ND4JComplexNumbersNotSupportedException();
@@ -354,9 +359,21 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
     }
 
     @Override
+    public INDArray create(double[] data, long[] shape, char ordering) {
+        return create(data, shape, (Character) ordering);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, char ordering) {
+        return create(data, shape, (Character) ordering);
+    }
+
+    @Override
     public INDArray create(List<INDArray> list, int[] shape, char ordering) {
         return new NDArray(list, shape, ordering);
     }
+
+
 
     @Override
     public INDArray create(List<INDArray> list, long[] shape, char ordering) {
@@ -367,6 +384,13 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
     public INDArray create(double[] data, int[] shape, long offset) {
         return new NDArray(Nd4j.createBuffer(data), shape, offset);
     }
+
+    @Override
+    public INDArray create(double[] data, long[] shape, long offset, Character order) {
+        return new NDArray(data, shape, offset, order.charValue());
+    }
+
+
 
     @Override
     public INDArray create(double[] data, int[] shape, int[] stride, long offset, char ordering) {

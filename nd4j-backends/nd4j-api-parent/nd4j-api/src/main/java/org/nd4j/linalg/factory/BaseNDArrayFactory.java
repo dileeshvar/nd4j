@@ -1470,6 +1470,24 @@ public abstract class BaseNDArrayFactory implements NDArrayFactory {
         return create(data, shape, Nd4j.getStrides(shape), 0);
     }
 
+    @Override
+    public INDArray create(float[] data, long[] shape) {
+        //ensure shapes that wind up being scalar end up with the write shape
+        if (shape.length == 1 && shape[0] == 0) {
+            shape = new long[] {1, 1};
+        }
+        return create(data, shape, Nd4j.getStrides(shape), 0);
+    }
+
+    @Override
+    public INDArray create(double[] data, long[] shape) {
+        //ensure shapes that wind up being scalar end up with the write shape
+        if (shape.length == 1 && shape[0] == 0) {
+            shape = new long[] {1, 1};
+        }
+        return create(data, shape, Nd4j.getStrides(shape), 0);
+    }
+
     /**
      * Create an ndrray with the specified shape
      *
@@ -2158,5 +2176,4 @@ public abstract class BaseNDArrayFactory implements NDArrayFactory {
         }
         return create(Nd4j.createBuffer(data), shape, stride, order, offset);
     }
-
 }

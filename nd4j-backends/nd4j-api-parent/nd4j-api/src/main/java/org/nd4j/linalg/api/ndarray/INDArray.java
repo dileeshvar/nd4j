@@ -1072,7 +1072,10 @@ public interface INDArray extends Serializable {
      * @param repeats the number of elements to repeat on each element
      * @return
      */
+    @Deprecated
     INDArray repeat(int dimension, int... repeats);
+
+    INDArray repeat(int dimension, long... repeats);
 
 
     /**
@@ -2262,6 +2265,8 @@ public interface INDArray extends Serializable {
      * @return the reshaped ndarray
      */
     INDArray reshape(char order, long... newShape);
+
+    INDArray reshape(char order, int... newShape);
 
 
     /**

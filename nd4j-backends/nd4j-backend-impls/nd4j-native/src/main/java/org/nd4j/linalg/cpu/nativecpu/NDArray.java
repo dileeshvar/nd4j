@@ -113,6 +113,10 @@ public class NDArray extends BaseNDArray {
         super(data, shape, stride, offset, ordering);
     }
 
+    public NDArray(double[] data, long[] shape, long offset, char ordering) {
+        super(data, shape, offset, ordering);
+    }
+
     /**
      * Construct an ndarray of the specified shape
      * with an empty data array
@@ -374,6 +378,10 @@ public class NDArray extends BaseNDArray {
     }
 
     public NDArray(double[] data, int[] shape, char ordering) {
+        super(data, shape, ordering);
+    }
+
+    public NDArray(double[] data, long[] shape, char ordering) {
         super(data, shape, ordering);
     }
 

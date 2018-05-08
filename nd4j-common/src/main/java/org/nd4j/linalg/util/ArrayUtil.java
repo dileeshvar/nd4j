@@ -145,6 +145,12 @@ public class ArrayUtil {
         return ret;
     }
 
+    public static long[] nTimes(long n, long toReplicate) {
+        // FIXME: int cast
+        val ret = new long[(int) n];
+        Arrays.fill(ret, toReplicate);
+        return ret;
+    }
 
     /**
      * Returns true if all of the elements in the
