@@ -58,6 +58,55 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaPresets {
     }
 }
 
+@Name("std::vector<std::vector<Nd4jLong> >") public static class LongVectorVector extends Pointer {
+    static { Loader.load(); }
+    /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+    public LongVectorVector(Pointer p) { super(p); }
+    public LongVectorVector(long[] ... array) { this(array.length); put(array); }
+    public LongVectorVector()       { allocate();  }
+    public LongVectorVector(long n) { allocate(n); }
+    private native void allocate();
+    private native void allocate(@Cast("size_t") long n);
+    public native @Name("operator=") @ByRef LongVectorVector put(@ByRef LongVectorVector x);
+
+    public boolean empty() { return size() == 0; }
+    public native long size();
+    public void clear() { resize(0); }
+    public native void resize(@Cast("size_t") long n);
+    public boolean empty(@Cast("size_t") long i) { return size(i) == 0; }
+    public native @Index(function = "at") long size(@Cast("size_t") long i);
+    public void clear(@Cast("size_t") long i) { resize(i, 0); }
+    public native @Index(function = "at") void resize(@Cast("size_t") long i, @Cast("size_t") long n);
+
+    @Index(function = "at") public native @Cast("Nd4jLong") long get(@Cast("size_t") long i, @Cast("size_t") long j);
+    public native LongVectorVector put(@Cast("size_t") long i, @Cast("size_t") long j, long value);
+
+    public long[][] get() {
+        long[][] array = new long[size() < Integer.MAX_VALUE ? (int)size() : Integer.MAX_VALUE][];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = new long[size(i) < Integer.MAX_VALUE ? (int)size(i) : Integer.MAX_VALUE];
+            for (int j = 0; j < array[i].length; j++) {
+                array[i][j] = get(i, j);
+            }
+        }
+        return array;
+    }
+    @Override public String toString() {
+        return java.util.Arrays.deepToString(get());
+    }
+
+    public LongVectorVector put(long[] ... array) {
+        if (size() != array.length) { resize(array.length); }
+        for (int i = 0; i < array.length; i++) {
+            if (size(i) != array[i].length) { resize(i, array[i].length); }
+            for (int j = 0; j < array[i].length; j++) {
+                put(i, j, array[i][j]);
+            }
+        }
+        return this;
+    }
+}
+
 @Name("std::vector<nd4j::NDArray<float>*>") public static class FloatNDArrayVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
@@ -10130,8 +10179,8 @@ public static class NativeOps extends org.nd4j.nativeblas.NativeOps {
         private native void allocate();
         
         // constructor
-        public Intervals(@StdVector std::vector<Nd4jLong> content ) { super((Pointer)null); allocate(content); }
-        private native void allocate(@StdVector std::vector<Nd4jLong> content );
+        public Intervals(@Const @ByRef LongVectorVector content ) { super((Pointer)null); allocate(content); }
+        private native void allocate(@Const @ByRef LongVectorVector content );
         
         // accessing operator
         public native @Cast("Nd4jLong*") @StdVector @Name("operator []") LongPointer get(@Cast("const Nd4jLong") long i);
