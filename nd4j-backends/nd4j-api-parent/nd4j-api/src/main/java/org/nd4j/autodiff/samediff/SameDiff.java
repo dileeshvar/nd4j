@@ -6146,7 +6146,7 @@ public class SameDiff {
         val hash = getOpNum(node.opName(), node.opType());
         //log.info("Exporting node: [{}:<{}> ; OpType: {}; Hash/opNum: {}]", node.opName(), node.tensorflowName(), node.opType(), hash);
 
-        float[] extras = node.getExtraArgs() != null ? new float[node.getExtraArgs().length] : new float[0];
+        double[] extras = node.getExtraArgs() != null ? new double[node.getExtraArgs().length] : new double[0];
         for (int e = 0; e < extras.length; e++) {
             extras[e] = ((Number) node.getExtraArgs()[e]).floatValue();
         }
