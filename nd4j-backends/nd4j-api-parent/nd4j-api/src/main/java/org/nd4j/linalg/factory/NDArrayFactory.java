@@ -1905,6 +1905,11 @@ public interface NDArrayFactory {
     INDArray createFromNpyFile(File file);
 
 
+    INDArray create(float[] data, long[] shape, long[] stride, long offset, char ordering);
+
+    INDArray create(double[] data, long[] shape, long[] stride, long offset, char ordering);
+
+
     INDArray[] tear(INDArray tensor, int... dimensions);
 
     INDArray sort(INDArray x, boolean descending);

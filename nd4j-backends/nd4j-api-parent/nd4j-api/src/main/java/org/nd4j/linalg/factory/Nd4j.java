@@ -3993,6 +3993,25 @@ public class Nd4j {
         return ret;
     }
 
+
+    public static INDArray create(double[] data, long[] shape, long[] stride, long offset, char order) {
+        shape = getEnsuredShape(shape);
+
+        if (shape.length == 1) {
+            if (shape[0] == data.length) {
+                shape = new long[] {1, data.length};
+            } else
+                throw new ND4JIllegalStateException("Shape of the new array " + Arrays.toString(shape)
+                        + " doesn't match data length: " + data.length);
+        }
+
+        checkShapeValues(data.length, shape);
+
+        INDArray ret = INSTANCE.create(data, shape, stride, offset, order);
+        logCreationIfNecessary(ret);
+        return ret;
+    }
+
     /**
      * Creates a complex ndarray with the specified shape
      *
@@ -5287,6 +5306,14 @@ public class Nd4j {
     }
 
     protected static void checkShapeValues(int length, int[] shape) {
+        checkShapeValues(shape);
+
+        if (ArrayUtil.prodLong(shape) > length)
+            throw new ND4JIllegalStateException("Shape of the new array " + Arrays.toString(shape)
+                    + " doesn't match data length: " + length);
+    }
+
+    protected static void checkShapeValues(int length, long[] shape) {
         checkShapeValues(shape);
 
         if (ArrayUtil.prodLong(shape) > length)
@@ -7173,8 +7200,8 @@ public class Nd4j {
     public static INDArray createFromFlatArray(FlatArray array) {
         val dtype = array.dtype();
         val order = array.byteOrder();
-        val rank = array.shape(0);
-        val shape = new int[rank * 2 + 4];
+        val rank = (int) array.shape(0);
+        val shape = new long[rank * 2 + 4];
         for (int e = 0; e < shape.length; e++)
             shape[e] = array.shape(e);
 

@@ -129,9 +129,9 @@ public class Range extends DynamicCustomOp {
         int cnt = 0;
 
         if (iArgs.length > 0) {
-            int start = iArgs[0];
-            int stop = iArgs[1];
-            int step = iArgs[2];
+            int start = (int) iArgs[0];
+            int stop = (int) iArgs[1];
+            int step = (int) iArgs[2];
 
             double e = (double) start;
             if (start > stop) {

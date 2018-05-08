@@ -486,8 +486,8 @@ public class While extends DifferentialFunction implements CustomOp {
     }
 
     @Override
-    public int[] iArgs() {
-        return new int[0];
+    public long[] iArgs() {
+        return new long[0];
     }
 
     @Override
@@ -511,7 +511,7 @@ public class While extends DifferentialFunction implements CustomOp {
     }
 
     @Override
-    public Integer getIArgument(int index) {
+    public Long getIArgument(int index) {
         return null;
     }
 

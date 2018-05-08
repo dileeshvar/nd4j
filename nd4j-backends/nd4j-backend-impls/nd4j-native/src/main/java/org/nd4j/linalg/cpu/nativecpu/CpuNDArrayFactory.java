@@ -21,6 +21,7 @@ package org.nd4j.linalg.cpu.nativecpu;
 
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.nd4j.linalg.compression.CompressionUtils;
 import org.nd4j.linalg.exception.ND4JComplexNumbersNotSupportedException;
 import org.nd4j.linalg.primitives.Pair;
@@ -373,6 +374,16 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
     }
 
     @Override
+    public INDArray create(double[] data, long[] shape, long[] stride, long offset, char ordering) {
+        return new NDArray(Nd4j.createBuffer(data), shape, stride, offset, ordering);
+    }
+
+    @Override
+    public INDArray create(float[] data, long[] shape, long[] stride, long offset, char ordering) {
+        return new NDArray(Nd4j.createBuffer(data), shape, stride, offset, ordering);
+    }
+
+    @Override
     public INDArray create(float[] data, long[] shape, long[] stride, long offset) {
         return new NDArray(data, shape, stride, offset, Nd4j.order());
     }
@@ -636,14 +647,14 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
             } else {
                 if (m.data().dataType() == DataBuffer.Type.DOUBLE) {
                     nativeOps.flattenDouble(dummy, linearIndex, order, (DoublePointer) ret.data().addressPointer(),
-                            (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                            (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                             (DoublePointer) m.data().addressPointer(),
-                            (IntPointer) m.shapeInfoDataBuffer().addressPointer());
+                            (LongPointer) m.shapeInfoDataBuffer().addressPointer());
                 } else if (m.data().dataType() == DataBuffer.Type.FLOAT) {
                     nativeOps.flattenFloat(dummy, linearIndex, order, (FloatPointer) ret.data().addressPointer(),
-                            (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                            (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                             (FloatPointer) m.data().addressPointer(),
-                            (IntPointer) m.shapeInfoDataBuffer().addressPointer());
+                            (LongPointer) m.shapeInfoDataBuffer().addressPointer());
 
                 } else {
                     throw new UnsupportedOperationException("Illegal data opType for copy");
@@ -693,19 +704,19 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
         if (Nd4j.dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.tearDouble(null,
                     (DoublePointer) tensor.data().pointer(),
-                    (IntPointer) tensor.shapeInfoDataBuffer().pointer(),
+                    (LongPointer) tensor.shapeInfoDataBuffer().pointer(),
                     targets,
-                    (IntPointer) result[0].shapeInfoDataBuffer().pointer(),
-                    (IntPointer) tadBuffers.getFirst().pointer(),
+                    (LongPointer) result[0].shapeInfoDataBuffer().pointer(),
+                    (LongPointer) tadBuffers.getFirst().pointer(),
                     new LongPointerWrapper(tadBuffers.getSecond().pointer())
             );
         } else if (Nd4j.dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.tearFloat(null,
                     (FloatPointer) tensor.data().pointer(),
-                    (IntPointer) tensor.shapeInfoDataBuffer().pointer(),
+                    (LongPointer) tensor.shapeInfoDataBuffer().pointer(),
                     targets,
-                    (IntPointer) result[0].shapeInfoDataBuffer().pointer(),
-                    (IntPointer) tadBuffers.getFirst().pointer(),
+                    (LongPointer) result[0].shapeInfoDataBuffer().pointer(),
+                    (LongPointer) tadBuffers.getFirst().pointer(),
                     new LongPointerWrapper(tadBuffers.getSecond().pointer())
                     );
         } else if (Nd4j.dataType() == DataBuffer.Type.HALF) {
@@ -768,20 +779,20 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
         if (ret.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.concatDouble(null, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (DoublePointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     //new PointerPointer(new Pointer[] {null}), new PointerPointer(new Pointer[] {null}));
                     null, null);
         } else if (ret.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.concatFloat(null, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (FloatPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     //new PointerPointer(new Pointer[] {null}), new PointerPointer(new Pointer[] {null}));
                     null, null);
 
         } else if (ret.data().dataType() == DataBuffer.Type.HALF) {
             nativeOps.concatHalf(null, dimension, toConcat.length, dataPointers, shapeInfoPointers,
                     (ShortPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
                     //new PointerPointer(new Pointer[]{null}), new PointerPointer(new Pointer[]{null}));
                     null, null);
         } else {
@@ -902,25 +913,25 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
 
         if (ret.data().dataType() == DataBuffer.Type.DOUBLE) {
             nativeOps.pullRowsDouble(dummy, (DoublePointer) source.data().addressPointer(),
-                    (IntPointer) source.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) source.shapeInfoDataBuffer().addressPointer(),
                     (DoublePointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
-                    (IntPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (IntPointer) zTadShapeInfo,
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
+                    (LongPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (LongPointer) zTadShapeInfo,
                     new LongPointerWrapper(zTadOffsets));
         } else if (ret.data().dataType() == DataBuffer.Type.FLOAT) {
             nativeOps.pullRowsFloat(dummy, (FloatPointer) source.data().addressPointer(),
-                    (IntPointer) source.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) source.shapeInfoDataBuffer().addressPointer(),
                     (FloatPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
-                    (IntPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (IntPointer) zTadShapeInfo,
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
+                    (LongPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (LongPointer) zTadShapeInfo,
                     new LongPointerWrapper(zTadOffsets));
 
         } else {
             nativeOps.pullRowsHalf(dummy, (ShortPointer) source.data().addressPointer(),
-                    (IntPointer) source.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) source.shapeInfoDataBuffer().addressPointer(),
                     (ShortPointer) ret.data().addressPointer(),
-                    (IntPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
-                    (IntPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (IntPointer) zTadShapeInfo,
+                    (LongPointer) ret.shapeInfoDataBuffer().addressPointer(), indexes.length, pIndex,
+                    (LongPointer) hostTadShapeInfo, new LongPointerWrapper(hostTadOffsets), (LongPointer) zTadShapeInfo,
                     new LongPointerWrapper(zTadOffsets));
         }
 
@@ -1085,7 +1096,7 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
 
         long numTads = arrays.get(0).length() / tadLength;
 
-        long[] map = ArrayUtil.buildInterleavedVector(rnd, numTads);
+        val map = ArrayUtil.buildInterleavedVector(rnd, (int) numTads);
 
         PointerPointer dataPointers = new PointerPointer(arrays.size());
         PointerPointer shapePointers = new PointerPointer(arrays.size());
@@ -1098,7 +1109,7 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
 
         TADManager tadManager = Nd4j.getExecutioner().getTADManager();
 
-        LongPointer ptrMap = new LongPointer(map);
+        val ptrMap = new IntPointer(map);
 
         long[] ptrs = new long[arrays.size()];
 
@@ -1431,9 +1442,9 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
             return x;
 
         if (x.data().dataType() == DataBuffer.Type.FLOAT) {
-            NativeOpsHolder.getInstance().getDeviceNativeOps().sortFloat(null, (FloatPointer) x.data().addressPointer(), (IntPointer) x.shapeInfoDataBuffer().addressPointer(), descending);
+            NativeOpsHolder.getInstance().getDeviceNativeOps().sortFloat(null, (FloatPointer) x.data().addressPointer(), (LongPointer) x.shapeInfoDataBuffer().addressPointer(), descending);
         } else if (x.data().dataType() == DataBuffer.Type.DOUBLE) {
-            NativeOpsHolder.getInstance().getDeviceNativeOps().sortDouble(null, (DoublePointer) x.data().addressPointer(), (IntPointer) x.shapeInfoDataBuffer().addressPointer(), descending);
+            NativeOpsHolder.getInstance().getDeviceNativeOps().sortDouble(null, (DoublePointer) x.data().addressPointer(), (LongPointer) x.shapeInfoDataBuffer().addressPointer(), descending);
         } else {
             throw new UnsupportedOperationException("Unknown dataype " + x.data().dataType());
         }
@@ -1451,19 +1462,19 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
         if (x.data().dataType() == DataBuffer.Type.FLOAT) {
             NativeOpsHolder.getInstance().getDeviceNativeOps().sortTadFloat(null,
                     (FloatPointer) x.data().addressPointer(),
-                    (IntPointer) x.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) x.shapeInfoDataBuffer().addressPointer(),
                     (IntPointer) Nd4j.getConstantHandler().getConstantBuffer(dimension).addressPointer(),
                     dimension.length,
-                    (IntPointer) tadBuffers.getFirst().addressPointer(),
+                    (LongPointer) tadBuffers.getFirst().addressPointer(),
                     new LongPointerWrapper(tadBuffers.getSecond().addressPointer()),
                     descending);
         } else if (x.data().dataType() == DataBuffer.Type.DOUBLE) {
             NativeOpsHolder.getInstance().getDeviceNativeOps().sortTadDouble(null,
                     (DoublePointer) x.data().addressPointer(),
-                    (IntPointer) x.shapeInfoDataBuffer().addressPointer(),
+                    (LongPointer) x.shapeInfoDataBuffer().addressPointer(),
                     (IntPointer) Nd4j.getConstantHandler().getConstantBuffer(dimension).addressPointer(),
                     dimension.length,
-                    (IntPointer) tadBuffers.getFirst().addressPointer(),
+                    (LongPointer) tadBuffers.getFirst().addressPointer(),
                     new LongPointerWrapper(tadBuffers.getSecond().addressPointer()),
                     descending);
         } else {

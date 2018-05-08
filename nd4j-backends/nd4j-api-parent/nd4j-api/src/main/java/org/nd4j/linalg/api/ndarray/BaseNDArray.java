@@ -6160,7 +6160,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
     @Override
     public int toFlatArray(FlatBufferBuilder builder) {
-        int shape = FlatArray.createShapeVector(builder, this.shapeInfoDataBuffer().asInt());
+        int shape = FlatArray.createShapeVector(builder, this.shapeInfoDataBuffer().asLong());
         int buffer = FlatArray.createBufferVector(builder, this.data().asBytes());
         int array = FlatArray.createFlatArray(builder, shape, buffer, SameDiff.getDataTypeAsByte(this.data().dataType()), ByteOrder.BE);
 

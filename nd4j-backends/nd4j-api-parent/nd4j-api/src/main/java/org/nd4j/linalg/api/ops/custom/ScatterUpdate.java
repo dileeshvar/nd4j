@@ -98,7 +98,7 @@ public class ScatterUpdate implements CustomOp {
     }
 
     @Override
-    public int[] iArgs() {
+    public long[] iArgs() {
         return op.iArgs();
     }
 
@@ -123,7 +123,7 @@ public class ScatterUpdate implements CustomOp {
     }
 
     @Override
-    public Integer getIArgument(int index) {
+    public Long getIArgument(int index) {
         return op.getIArgument(index);
     }
 
