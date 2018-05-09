@@ -5347,8 +5347,8 @@ public class Nd4j {
      * @param columns the columns of the ndarray
      * @return the instance
      */
-    public static INDArray create(int rows, int columns, char ordering) {
-        return create(new int[] {rows, columns}, ordering);
+    public static INDArray create(long rows, long columns, char ordering) {
+        return create(new long[] {rows, columns}, ordering);
     }
 
     /**

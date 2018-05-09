@@ -4715,7 +4715,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         } else if (Shape.isRowVectorShape(shape())) {
             return length();
         }
-        throw new IllegalStateException("Rank is " + rank() + " columns() call is not valid");
+        throw new IllegalStateException("Rank is [" + rank() + "]; columns() call is not valid");
 
 
     }
