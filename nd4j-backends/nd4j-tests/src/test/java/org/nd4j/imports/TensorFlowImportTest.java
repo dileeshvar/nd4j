@@ -887,6 +887,48 @@ public class TensorFlowImportTest extends BaseNd4jTest {
         tg.asFlatFile(new File("../../../libnd4j/tests_cpu/resources/simpleif_0.fb"));
     }
 
+    @Test
+    @Ignore
+    public void testCrash_119_ae_00() throws Exception {
+        Nd4j.create(1);
+
+        val tg = TFGraphMapper.getInstance().importGraph(new ClassPathResource("tf_graphs/examples/ae_00/frozen_model.pb").getInputStream());
+        assertNotNull(tg);
+
+        val input0 = Nd4j.create(new double[] {0.98174960, 0.44406342,  0.50100771,  1.00000000,  -0.94038386,  0.46501783, -0.49040590, 0.98153842, -0.00198260,  0.49108310, -0.06085236, 0.93523693, -0.05857396, -0.46633510, -0.02806635, -0.96879626, -0.03938015, -0.51578135, -0.06333921, -1.00000000}, new int[] {5, 4});
+
+        tg.associateArrayWithVariable(input0, tg.getVariable("input"));
+
+        tg.asFlatFile(new File("../../../libnd4j/tests_cpu/resources/ae_00.fb"));
+    }
+
+    @Test
+    @Ignore
+    public void testCrash_119_expand_dim() throws Exception {
+        Nd4j.create(1);
+
+        val tg = TFGraphMapper.getInstance().importGraph(new ClassPathResource("tf_graphs/examples/expand_dim/frozen_model.pb").getInputStream());
+        assertNotNull(tg);
+
+        val input0 = Nd4j.create(new double[] {0.09753360, 0.76124972, 0.24693797, 0.13813169, 0.33144656, 0.08299957, 0.67197708, 0.80659380, 0.98274191, 0.63566073, 0.21592326, 0.54902743}, new int[] {3, 4});
+
+        tg.associateArrayWithVariable(input0, tg.getVariable("input_0"));
+
+        tg.asFlatFile(new File("../../../libnd4j/tests_cpu/resources/expand_dim.fb"));
+    }
+
+    @Test
+    @Ignore
+    public void testCrash_119_reduce_dim() throws Exception {
+        Nd4j.create(1);
+
+        val tg = TFGraphMapper.getInstance().importGraph(new ClassPathResource("tf_graphs/reduce_dim.pb.txt").getInputStream());
+        assertNotNull(tg);
+
+        tg.asFlatFile(new File("../../../libnd4j/tests_cpu/resources/reduce_dim.fb"));
+    }
+
+
     @Test(expected = ND4JIllegalStateException.class)
     public void testNonFrozenGraph1() throws Exception {
         val tg = TFGraphMapper.getInstance().importGraph(new ClassPathResource("tf_graphs/examples/unfrozen_simple_ae.pb").getInputStream());
