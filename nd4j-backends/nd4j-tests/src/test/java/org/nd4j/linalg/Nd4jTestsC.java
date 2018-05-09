@@ -33,6 +33,7 @@ import org.nd4j.linalg.api.ops.impl.accum.Mmul;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.Im2col;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
 import org.nd4j.linalg.indexing.BooleanIndexing;
+import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.primitives.Pair;
 import org.junit.After;
 import org.junit.Before;
@@ -6269,6 +6270,18 @@ public class Nd4jTestsC extends BaseNd4jTest {
         assertEquals(exp, arraya.mmul(arraya));
 
         assertEquals(exp, arrayb.mmul(arrayb));
+    }
+
+    @Test
+    public void testLegacyDeserialization_1() throws Exception {
+        val f = new ClassPathResource("legacy/NDArray.bin").getFile();
+
+        val array = Nd4j.read(new FileInputStream(f));
+        val exp = Nd4j.linspace(1, 120, 120).reshape(2, 3, 4, 5);
+
+        assertEquals(120, array.length());
+        assertArrayEquals(new long[]{2, 3, 4, 5}, array.shape());
+        assertEquals(exp, array);
     }
 
     ///////////////////////////////////////////////////////
