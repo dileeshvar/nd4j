@@ -1353,16 +1353,16 @@ public class CpuNDArrayFactory extends BaseNDArrayFactory {
         shapeBufferPointer.position(0);
 
 
-        IntPointer intPointer = new IntPointer(shapeBufferPointer);
-        IntPointer newPointer = new IntPointer(length);
+        val intPointer = new LongPointer(shapeBufferPointer);
+        val newPointer = new LongPointer(length);
 
         Pointer.memcpy(newPointer, intPointer, shapeBufferPointer.limit());
 
         DataBuffer shapeBuffer = Nd4j.createBuffer(
                 newPointer,
-                DataBuffer.Type.INT,
+                DataBuffer.Type.LONG,
                 length,
-                IntIndexer.create(newPointer));
+                LongRawIndexer.create(newPointer));
 
         dataPointer.position(0);
         dataPointer.limit(dataBufferElementSize * Shape.length(shapeBuffer));

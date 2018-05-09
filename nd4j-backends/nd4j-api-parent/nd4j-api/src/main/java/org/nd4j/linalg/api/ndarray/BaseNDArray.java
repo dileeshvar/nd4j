@@ -1414,15 +1414,18 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     public INDArray putScalar(long i, double value) {
         if (i < 0)
             i += rank();
-        if (isScalar()) {
+
+        // TODO: i'm not sure that rank == 1 has fair shortcut here
+        if (isScalar() || rank() == 1) {
             autoProcessScalarCall();
             data.put(i, value);
             return this;
         }
 
-        if (isRowVector()) {
+        // we cant raise rank here, if original rank is 1
+        if (isRowVector() && rank() == 2) {
             return putScalar(0, i, value);
-        } else if (isColumnVector()) {
+        } else if (isColumnVector() && rank() == 2) {
             return putScalar(i, 0, value);
         }
         long[] indexes = ordering() == 'c' ? Shape.ind2subC(this, i) : Shape.ind2sub(this, i);
@@ -2284,7 +2287,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
             for(int i = 0; i < indices.columns(); i++) {
                 int[] specifiedIndex = indices.getColumn(i).dup().data().asInt();
-                ret.putScalar(i,getDouble(specifiedIndex));
+                val v = getDouble(specifiedIndex);
+                ret.putScalar(i, v);
             }
 
             return ret;
