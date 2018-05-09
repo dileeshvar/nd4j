@@ -60,7 +60,8 @@ public interface DataBuffer extends Serializable {
      * heap is backed by an array and can be useful depending on the api
      */
     enum AllocationMode {
-        DIRECT, HEAP, JAVACPP
+        DIRECT, HEAP, JAVACPP,
+        LONG_SHAPE, // long shapes will be used instead of int
     }
 
     /**
@@ -457,6 +458,8 @@ public interface DataBuffer extends Serializable {
      * @param element the element to assign
      */
     void put(long i, int element);
+
+    void put(long i, long element);
 
 
     /**

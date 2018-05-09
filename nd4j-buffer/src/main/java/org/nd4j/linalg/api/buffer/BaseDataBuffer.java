@@ -1064,7 +1064,11 @@ public abstract class BaseDataBuffer implements DataBuffer {
     }
 
     public void pointerIndexerByGlobalType(Type currentType) {
-        if (currentType == Type.INT) {
+        if (currentType == Type.LONG) {
+            pointer = new LongPointer(length());
+            setIndexer(LongRawIndexer.create((LongPointer) pointer));
+            type = Type.LONG;
+        } else if (currentType == Type.INT) {
             pointer = new IntPointer(length());
             setIndexer(IntIndexer.create((IntPointer) pointer));
             type = Type.INT;
@@ -1104,6 +1108,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             ((DoubleIndexer) indexer).put(offset() + i, element);
         } else if (dataType() == Type.INT) {
             ((IntIndexer) indexer).put(offset() + i, (int) element);
+        } else if (dataType() == Type.LONG) {
+            ((LongRawIndexer) indexer).put(offset() + i, (long) element);
         } else {
             ((FloatIndexer) indexer).put(offset() + i, element);
         }
@@ -1121,6 +1127,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             ((DoubleIndexer) indexer).put(offset() + i, element);
         } else if (dataType() == Type.INT) {
             ((IntIndexer) indexer).put(offset() + i, (int) element);
+        } else if (dataType() == Type.LONG) {
+            ((LongRawIndexer) indexer).put(offset() + i, (long) element);
         } else if (dataType() == Type.HALF) {
             ((HalfIndexer) indexer).put(offset() + i, (float) element);
         } else {
@@ -1137,8 +1145,26 @@ public abstract class BaseDataBuffer implements DataBuffer {
             ((DoubleIndexer) indexer).put(offset() + i, element);
         } else if (dataType() == Type.INT) {
             ((IntIndexer) indexer).put(offset() + i, element);
+        } else if (dataType() == Type.LONG) {
+            ((LongRawIndexer) indexer).put(offset() + i, element);
         } else {
             ((FloatIndexer) indexer).put(offset() + i, element);
+        }
+        if (i == length) {
+            length++;
+        }
+    }
+
+    @Override
+    public void put(long i, long element) {
+        if (dataType() == Type.DOUBLE) {
+            ((DoubleIndexer) indexer).put(offset() + i, (double) element);
+        } else if (dataType() == Type.INT) {
+            ((IntIndexer) indexer).put(offset() + i, (int) element);
+        } else if (dataType() == Type.LONG) {
+            ((LongRawIndexer) indexer).put(offset() + i, element);
+        } else {
+            ((FloatIndexer) indexer).put(offset() + i, (float) element);
         }
         if (i == length) {
             length++;
@@ -1344,33 +1370,68 @@ public abstract class BaseDataBuffer implements DataBuffer {
         try {
             //referencing = Collections.synchronizedSet(new HashSet<String>());
             allocationMode = AllocationMode.valueOf(s.readUTF());
-            length = s.readInt();
-            Type currentType = Type.valueOf(s.readUTF());
-            if (currentType != Type.COMPRESSED)
-                type = DataTypeUtil.getDtypeFromContext();
-            else
-                type = currentType;
 
-            if (DataTypeUtil.getDtypeFromContext() == Type.DOUBLE && currentType != Type.INT)
-                elementSize = 8;
-            else if (DataTypeUtil.getDtypeFromContext() == Type.FLOAT || currentType == Type.INT)
-                elementSize = 4;
-            else if (DataTypeUtil.getDtypeFromContext() == Type.HALF && currentType != Type.INT)
-                elementSize = 2;
+            // old AllocationMode values are: DIRECT, HEAP, JAVACPP. Just using legacy here
+            if (allocationMode.ordinal() < 3) {
+                length = s.readInt();
+                Type currentType = Type.valueOf(s.readUTF());
+                if (currentType != Type.COMPRESSED)
+                    type = DataTypeUtil.getDtypeFromContext();
+                else
+                    type = currentType;
 
-            if (currentType != DataTypeUtil.getDtypeFromContext() && currentType != Type.HALF && currentType != Type.INT
-                            && !(DataTypeUtil.getDtypeFromContext() == Type.DOUBLE)) {
-                log.warn("Loading a data stream with opType different from what is set globally. Expect precision loss");
-                if (DataTypeUtil.getDtypeFromContext() == Type.INT)
-                    log.warn("Int to float/double widening UNSUPPORTED!!!");
+                if (currentType == Type.LONG)
+                    elementSize = 8;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.DOUBLE && currentType != Type.INT)
+                    elementSize = 8;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.FLOAT || currentType == Type.INT)
+                    elementSize = 4;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.HALF && currentType != Type.INT)
+                    elementSize = 2;
+
+                if (currentType != DataTypeUtil.getDtypeFromContext() && currentType != Type.HALF && currentType != Type.INT
+                        && !(DataTypeUtil.getDtypeFromContext() == Type.DOUBLE)) {
+                    log.warn("Loading a data stream with opType different from what is set globally. Expect precision loss");
+                    if (DataTypeUtil.getDtypeFromContext() == Type.INT)
+                        log.warn("Int to float/double widening UNSUPPORTED!!!");
+                }
+                pointerIndexerByGlobalType(currentType);
+
+                if (currentType != Type.COMPRESSED)
+                    readContent(s, currentType, DataTypeUtil.getDtypeFromContext());
+
+                // we should switch types here
+
+                //wrappedBuffer = pointer().asByteBuffer();
+
+            } else if (allocationMode.equals(AllocationMode.LONG_SHAPE)) {
+                length = s.readLong();
+                Type currentType = Type.valueOf(s.readUTF());
+                if (currentType != Type.COMPRESSED)
+                    type = DataTypeUtil.getDtypeFromContext();
+                else
+                    type = currentType;
+
+                if (currentType == Type.LONG)
+                    elementSize = 8;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.DOUBLE && currentType != Type.INT)
+                    elementSize = 8;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.FLOAT || currentType == Type.INT)
+                    elementSize = 4;
+                else if (DataTypeUtil.getDtypeFromContext() == Type.HALF && currentType != Type.INT)
+                    elementSize = 2;
+
+                if (currentType != DataTypeUtil.getDtypeFromContext() && currentType != Type.HALF && currentType != Type.INT
+                        && !(DataTypeUtil.getDtypeFromContext() == Type.DOUBLE)) {
+                    log.warn("Loading a data stream with opType different from what is set globally. Expect precision loss");
+                    if (DataTypeUtil.getDtypeFromContext() == Type.INT)
+                        log.warn("Int to float/double widening UNSUPPORTED!!!");
+                }
+                pointerIndexerByGlobalType(currentType);
+
+                if (currentType != Type.COMPRESSED)
+                    readContent(s, currentType, DataTypeUtil.getDtypeFromContext());
             }
-            pointerIndexerByGlobalType(currentType);
-
-            if (currentType != Type.COMPRESSED)
-                readContent(s, currentType, DataTypeUtil.getDtypeFromContext());
-
-            //wrappedBuffer = pointer().asByteBuffer();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -1404,6 +1465,10 @@ public abstract class BaseDataBuffer implements DataBuffer {
                 for (int i = 0; i < length(); i++) {
                     putByGlobalType(i, toFloat(s.readShort()), globalType);
                 }
+            } else if (currentType == Type.LONG) {
+                for (int i = 0; i < length(); i++) {
+                    putByGlobalType(i, s.readLong(), globalType);
+                }
             } else {
                 for (int i = 0; i < length(); i++) {
                     putByGlobalType(i, s.readInt(), globalType);
@@ -1420,11 +1485,14 @@ public abstract class BaseDataBuffer implements DataBuffer {
             throw new IllegalArgumentException("Length of data buffer can not be >= Integer.MAX_VALUE on output");
         //        log.info("Saving dType: {}", dataType().name());
         out.writeUTF(allocationMode.name());
-        out.writeInt((int) length());
+        out.writeLong(length());
         out.writeUTF(dataType().name());
         if (dataType() == Type.DOUBLE) {
             for (int i = 0; i < length(); i++)
                 out.writeDouble(getDouble(i));
+        } else if (dataType() == Type.LONG) {
+            for (int i = 0; i < length(); i++)
+                out.writeLong(getLong(i));
         } else if (dataType() == Type.INT) {
             for (int i = 0; i < length(); i++)
                 out.writeInt(getInt(i));
