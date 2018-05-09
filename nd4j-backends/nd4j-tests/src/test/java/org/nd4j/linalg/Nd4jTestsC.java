@@ -1569,6 +1569,9 @@ public class Nd4jTestsC extends BaseNd4jTest {
         INDArray assertion = Nd4j.create(new double[] {2.71828183f, 7.3890561f, 20.08553692f, 54.59815003f});
         INDArray exped = Transforms.exp(n);
         assertEquals(assertion, exped);
+
+        assertArrayEquals(new double[] {2.71828183f, 7.3890561f, 20.08553692f, 54.59815003f}, exped.toDoubleVector(), 1e-5);
+        assertArrayEquals(new double[] {2.71828183f, 7.3890561f, 20.08553692f, 54.59815003f}, assertion.toDoubleVector(), 1e-5);
     }
 
 

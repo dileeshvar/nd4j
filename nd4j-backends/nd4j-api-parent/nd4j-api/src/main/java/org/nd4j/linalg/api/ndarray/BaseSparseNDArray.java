@@ -27,6 +27,7 @@ import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.linalg.util.LinAlgExceptions;
 
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -343,7 +344,7 @@ public abstract class BaseSparseNDArray implements ISparseNDArray {
 
 
     @Override
-    public IntBuffer shapeInfo() {
+    public LongBuffer shapeInfo() {
         return null;
     }
 

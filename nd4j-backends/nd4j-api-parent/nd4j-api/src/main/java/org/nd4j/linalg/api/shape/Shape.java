@@ -35,10 +35,7 @@ import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.indexing.ShapeOffsetResolution;
 import org.nd4j.linalg.util.ArrayUtil;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
+import java.nio.*;
 import java.util.*;
 
 /**
@@ -687,8 +684,8 @@ public class Shape {
      * @param indices the indices to iterate over
      * @return the double at the specified index
      */
-    public static double getDouble(INDArray arr, int... indices) {
-        long offset = getOffset(arr.shapeInfo(), indices);
+    public static double getDouble(INDArray arr, int[] indices) {
+        long offset = getOffset(arr.shapeInfo(), ArrayUtil.toLongArray(indices));
         return arr.data().getDouble(offset);
     }
 
@@ -875,13 +872,23 @@ public class Shape {
      * @param indices             Indices array to get the offset for (must be same length as array rank)
      * @return                    Buffer offset fo the specified indices
      */
-    public static long getOffset(IntBuffer shapeInformation, int... indices) {
+    public static long getOffset(IntBuffer shapeInformation, int[] indices) {
+        // FIXME: int cast
+        return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
+    }
+
+    public static long getOffset(LongBuffer shapeInformation, int[] indices) {
+        // FIXME: int cast
+        return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
+    }
+
+    public static long getOffset(LongBuffer shapeInformation, long... indices) {
         int rank = rank(shapeInformation);
         if (indices.length != rank)
             throw new IllegalArgumentException("Indexes must be same length as array rank");
         long offset = 0;
         for (int i = 0; i < rank; i++) {
-            int size_dimi = size(shapeInformation, i);
+            int size_dimi = (int) size(shapeInformation, i);
             if (size_dimi != 1) {
                 offset += indices[i] * stride(shapeInformation, i);
             }
@@ -2510,9 +2517,15 @@ public class Shape {
      * @return the rank for the shape buffer
      */
     public static int rank(IntBuffer buffer) {
-        Buffer buffer2 = (Buffer) buffer;
-        IntBuffer ret = (IntBuffer) buffer2.position(0);
+        val buffer2 = (Buffer) buffer;
+        val ret = (IntBuffer) buffer2.position(0);
         return ret.get(0);
+    }
+
+    public static int rank(LongBuffer buffer) {
+        val buffer2 = (Buffer) buffer;
+        val ret = (LongBuffer) buffer2.position(0);
+        return (int) ret.get(0);
     }
 
     public static int rank(long[] buffer) {
@@ -2530,6 +2543,13 @@ public class Shape {
      * @return             The size of the specified dimension
      */
     public static int size(IntBuffer buffer, int dimension) {
+        int rank = rank(buffer);
+        if (dimension >= rank)
+            throw new IllegalArgumentException("Invalid dimension " + dimension + " for rank " + rank + " array");
+        return buffer.get(1 + dimension);
+    }
+
+    public static long size(LongBuffer buffer, int dimension) {
         int rank = rank(buffer);
         if (dimension >= rank)
             throw new IllegalArgumentException("Invalid dimension " + dimension + " for rank " + rank + " array");
@@ -2593,6 +2613,13 @@ public class Shape {
         return ret;
     }
 
+    public static long[] shape(LongBuffer buffer) {
+        val ret = new long[rank(buffer)];
+        for (int i = 0; i < ret.length; i++)
+            ret[i] = buffer.get(1 + i);
+        return ret;
+    }
+
     /**
      * Get array shape from the buffer, as an int[]
      * @param buffer    Buffer to get the shape from
@@ -2631,6 +2658,13 @@ public class Shape {
      * @return             The stride of the specified dimension
      */
     public static int stride(IntBuffer buffer, int dimension) {
+        int rank = rank(buffer);
+        if (dimension >= rank)
+            throw new IllegalArgumentException("Invalid dimension " + dimension + " for rank " + rank + " array");
+        return buffer.get(1 + rank + dimension);
+    }
+
+    public static long stride(LongBuffer buffer, int dimension) {
         int rank = rank(buffer);
         if (dimension >= rank)
             throw new IllegalArgumentException("Invalid dimension " + dimension + " for rank " + rank + " array");
@@ -2714,8 +2748,15 @@ public class Shape {
      */
     public static IntBuffer stride(IntBuffer buffer) {
         int rank = rank(buffer);
-        Buffer buffer2 = (Buffer) buffer;
-        IntBuffer ret = (IntBuffer) buffer2.position(1 + rank);
+        val buffer2 = (Buffer) buffer;
+        val ret = (IntBuffer) buffer2.position(1 + rank);
+        return ret.slice();
+    }
+
+    public static LongBuffer stride(LongBuffer buffer) {
+        int rank = rank(buffer);
+        val buffer2 = (Buffer) buffer;
+        val ret = (LongBuffer) buffer2.position(1 + rank);
         return ret.slice();
     }
 
@@ -2772,6 +2813,13 @@ public class Shape {
         IntBuffer ret = (IntBuffer) buffer2.position(1);
         return ret.slice();
     }
+
+    public static LongBuffer shapeOf(LongBuffer buffer) {
+        Buffer buffer2 = (Buffer) buffer;
+        val ret = (LongBuffer) buffer2.position(1);
+        return ret.slice();
+    }
+
 
     public static int[] shapeOf(int[] buffer) {
         val rank = buffer[0];
@@ -2848,9 +2896,9 @@ public class Shape {
      * @return the shape information to string
      */
     public static String shapeToString(IntBuffer buffer) {
-        IntBuffer shapeBuff = shapeOf(buffer);
+        val shapeBuff = shapeOf(buffer);
         int rank = Shape.rank(buffer);
-        IntBuffer strideBuff = stride(buffer);
+        val strideBuff = stride(buffer);
         StringBuilder sb = new StringBuilder();
         sb.append("Rank: " + rank + ",");
         sb.append("Offset: " + Shape.offset(buffer) + "\n");
@@ -2873,6 +2921,34 @@ public class Shape {
         return sb.toString();
     }
 
+    public static String shapeToString(LongBuffer buffer) {
+        val shapeBuff = shapeOf(buffer);
+        int rank = Shape.rank(buffer);
+        val strideBuff = stride(buffer);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Rank: " + rank + ",");
+        sb.append("Offset: " + Shape.offset(buffer) + "\n");
+        sb.append(" Order: " + Shape.order(buffer));
+        sb.append(" Shape: [");
+        for (int i = 0; i < rank; i++) {
+            sb.append(shapeBuff.get(i));
+            if (i < rank - 1)
+                sb.append(",");
+        }
+        sb.append("], ");
+
+        sb.append(" stride: [");
+        for (int i = 0; i < rank; i++) {
+            sb.append(strideBuff.get(i));
+            if (i < rank - 1)
+                sb.append(",");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+
+
     /**
      * Get the offset for the buffer
      *
@@ -2882,7 +2958,8 @@ public class Shape {
      */
     @Deprecated
     public static int offset(DataBuffer buffer) {
-        throw new UnsupportedOperationException("offset() method should NOT be used");
+        //throw new UnsupportedOperationException("offset() method should NOT be used");
+        return 0;
     }
 
     /**
@@ -2894,12 +2971,14 @@ public class Shape {
      */
     @Deprecated
     public static int offset(int[] buffer) {
-        throw new UnsupportedOperationException("offset() method should NOT be used");
+        //throw new UnsupportedOperationException("offset() method should NOT be used");
+        return 0;
     }
 
     @Deprecated
     public static int offset(long[] buffer) {
-        throw new UnsupportedOperationException("offset() method should NOT be used");
+        //throw new UnsupportedOperationException("offset() method should NOT be used");
+        return 0;
     }
 
     /**
@@ -2908,7 +2987,11 @@ public class Shape {
      * @return
      */
     public static int offset(IntBuffer buffer) {
-        throw new UnsupportedOperationException("offset() method should NOT be used");
+        return 0;
+    }
+
+    public static long offset(LongBuffer buffer) {
+        return 0L;
     }
 
 
@@ -2990,6 +3073,11 @@ public class Shape {
      * @return
      */
     public static char order(IntBuffer buffer) {
+        int length = Shape.shapeInfoLength(Shape.rank(buffer));
+        return (char) buffer.get(length - 1);
+    }
+
+    public static char order(LongBuffer buffer) {
         int length = Shape.shapeInfoLength(Shape.rank(buffer));
         return (char) buffer.get(length - 1);
     }

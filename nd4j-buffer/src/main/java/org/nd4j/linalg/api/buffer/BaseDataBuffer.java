@@ -35,6 +35,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -981,6 +982,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             return ((FloatIndexer) indexer).get(offset() + i);
         } else if (dataType() == Type.INT) {
             return ((IntIndexer) indexer).get(offset() + i);
+        } else if (dataType() == Type.LONG) {
+                return ((LongRawIndexer) indexer).get(offset() + i);
         } else {
             return ((DoubleIndexer) indexer).get(offset() + i);
         }
@@ -1027,6 +1030,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             return (float) ((DoubleIndexer) indexer).get(offset() + i);
         } else if (dataType() == Type.INT) {
             return ((IntIndexer) indexer).get(offset() + i);
+        } else if (dataType() == Type.LONG) {
+            return ((LongRawIndexer) indexer).get(offset() + i);
         } else if (dataType() == Type.HALF) {
             return ((HalfIndexer) indexer).get(offset() + i);
         } else {
@@ -1053,6 +1058,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             return getDouble(i);
         else if (dataType() == Type.INT)
             return getInt(i);
+        else if (dataType() == Type.LONG)
+            return getLong(i);
         return getFloat(i);
     }
 
@@ -1162,6 +1169,17 @@ public abstract class BaseDataBuffer implements DataBuffer {
             return wrappedBuffer().asIntBuffer();
         } else
             return (IntBuffer) wrappedBuffer().asIntBuffer().position((int) offset());
+    }
+
+    @Override
+    public LongBuffer asNioLong() {
+        if (offset() >= Integer.MAX_VALUE)
+            throw new IllegalStateException("Index out of bounds " + offset());
+
+        if (offset() == 0) {
+            return wrappedBuffer().asLongBuffer();
+        } else
+            return (LongBuffer) wrappedBuffer().asLongBuffer().position((int) offset());
     }
 
     @Override

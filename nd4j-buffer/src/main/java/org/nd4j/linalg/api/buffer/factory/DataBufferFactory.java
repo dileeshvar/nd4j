@@ -85,6 +85,8 @@ public interface DataBufferFactory {
      */
     DataBuffer createDouble(long offset, ByteBuffer buffer, int length);
 
+    DataBuffer createLong(ByteBuffer buffer, int length);
+
     /**
      * Create a double data buffer
      *

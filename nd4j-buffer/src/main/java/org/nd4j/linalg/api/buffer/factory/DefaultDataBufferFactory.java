@@ -70,6 +70,8 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 
         } else if (underlyingBuffer.dataType() == DataBuffer.Type.INT) {
             return new IntBuffer(underlyingBuffer, length, offset);
+        } else if (underlyingBuffer.dataType() == DataBuffer.Type.LONG) {
+            return new LongBuffer(underlyingBuffer, length, offset);
         }
         return null;
     }
@@ -220,6 +222,11 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
     @Override
     public DataBuffer createInt(ByteBuffer buffer, int length) {
         return new IntBuffer(buffer, length);
+    }
+
+    @Override
+    public DataBuffer createLong(ByteBuffer buffer, int length) {
+        return new LongBuffer(buffer, length);
     }
 
     @Override

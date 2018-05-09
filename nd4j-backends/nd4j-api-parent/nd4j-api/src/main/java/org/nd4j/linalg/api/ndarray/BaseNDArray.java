@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.*;
 
 import static org.nd4j.linalg.factory.Nd4j.*;
@@ -965,8 +966,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         Pair<DataBuffer, DataBuffer> tadInfo =
                 Nd4j.getExecutioner().getTADManager().getTADOnlyShapeInfo(this, dimension);
         DataBuffer shapeInfo = tadInfo.getFirst();
-        val shape = Shape.shape(javaShapeInformation);
-        val stride = Shape.stride(javaShapeInformation);
+        val shape = Shape.shape(shapeInfo);
+        val stride = Shape.stride(shapeInfo).asLong();
         long offset = offset() + tadInfo.getSecond().getLong(index);
         INDArray toTad = Nd4j.create(data(), shape, stride, offset);
         BaseNDArray baseNDArray = (BaseNDArray) toTad;
@@ -2659,7 +2660,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
         //null character
         if (ordering() == '\u0000') {
-            Shape.setOrder(shapeInfo(), Nd4j.order());
+            //Shape.setOrder(shapeInfo(), Nd4j.order());
             throw new IllegalStateException("setOrder() shouldn't ever happen here");
         }
 
@@ -5069,8 +5070,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     }
 
     @Override
-    public IntBuffer shapeInfo() {
-        return shapeInformation.asNioInt();
+    public LongBuffer shapeInfo() {
+        return shapeInformation.asNioLong();
     }
 
     /**
@@ -5430,7 +5431,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     @Override
     public INDArray permutei(int... rearrange) {
         boolean alreadyInOrder = true;
-        IntBuffer shapeInfo = shapeInfo();
+        val shapeInfo = shapeInfo();
         int rank = Shape.rank(javaShapeInformation);
         for (int i = 0; i < rank; i++) {
             if (rearrange[i] != i) {
@@ -5443,8 +5444,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
             return this;
 
         checkArrangeArray(rearrange);
-        int[] newShape = doPermuteSwap(Shape.shapeOf(shapeInfo), rearrange);
-        int[] newStride = doPermuteSwap(Shape.stride(shapeInfo), rearrange);
+        val newShape = doPermuteSwap(Shape.shapeOf(shapeInfo), rearrange);
+        val newStride = doPermuteSwap(Shape.stride(shapeInfo), rearrange);
         char newOrder = Shape.getOrder(newShape, newStride, elementStride());
 
         //Set the shape information of this array: shape, stride, order.
@@ -5455,7 +5456,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         }
         shapeInfo.put(3+2*rank,newOrder);
         */
-        int ews = shapeInfo.get(2 * rank + 2);
+        val ews = shapeInfo.get(2 * rank + 2);
         /*
         if (ews < 1 && !attemptedToFindElementWiseStride)
             throw new RuntimeException("EWS is -1");
@@ -5480,6 +5481,13 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     }
 
 
+    protected long[] doPermuteSwap(LongBuffer shape, int[] rearrange) {
+        val ret = new long[rearrange.length];
+        for (int i = 0; i < rearrange.length; i++) {
+            ret[i] = shape.get(rearrange[i]);
+        }
+        return ret;
+    }
 
     protected int[] doPermuteSwap(IntBuffer shape, int[] rearrange) {
         int[] ret = new int[rearrange.length];

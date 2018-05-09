@@ -7381,6 +7381,7 @@ public static class NativeOps extends org.nd4j.nativeblas.NativeOps {
         public native @StdVector FloatPointer getBufferAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeInfoAsVector();
+        public native @Cast("int64_t*") @StdVector LongPointer getShapeInfoAsFlatVector();
 				
         /**
         *  set new order and shape in case of suitable array length (in-place operation)
@@ -8491,6 +8492,7 @@ public static class NativeOps extends org.nd4j.nativeblas.NativeOps {
         public native @Cast("float16*") @StdVector ShortPointer getBufferAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeInfoAsVector();
+        public native @Cast("int64_t*") @StdVector LongPointer getShapeInfoAsFlatVector();
 				
         /**
         *  set new order and shape in case of suitable array length (in-place operation)
@@ -9601,6 +9603,7 @@ public static class NativeOps extends org.nd4j.nativeblas.NativeOps {
         public native @StdVector DoublePointer getBufferAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeAsVector();
         public native @Cast("Nd4jLong*") @StdVector LongPointer getShapeInfoAsVector();
+        public native @Cast("int64_t*") @StdVector LongPointer getShapeInfoAsFlatVector();
 				
         /**
         *  set new order and shape in case of suitable array length (in-place operation)

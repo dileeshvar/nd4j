@@ -83,7 +83,7 @@ public class StaticShapeTests extends BaseNd4jTest {
 
                 val thisStride = arr.stride();
 
-                IntBuffer ib = arr.shapeInfo();
+                val ib = arr.shapeInfo();
                 DataBuffer db = arr.shapeInfoDataBuffer();
 
                 //Check shape calculation

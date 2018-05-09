@@ -26,6 +26,7 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.*;
 import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.buffer.LongBuffer;
 import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.jcublas.buffer.*;
@@ -156,6 +157,12 @@ public class CudaDataBufferFactory implements DataBufferFactory {
     @Override
     public DataBuffer createDouble(long offset, ByteBuffer buffer, int length) {
         return new CudaDoubleDataBuffer(buffer, length, offset);
+    }
+
+
+    @Override
+    public DataBuffer createLong(ByteBuffer buffer, int length) {
+        return new CudaLongDataBuffer(buffer, length);
     }
 
     @Override

@@ -1358,6 +1358,8 @@ public class Nd4j {
 
         if (type == DataBuffer.Type.INT)
             return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createInt(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createInt(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
+        else if (type == DataBuffer.Type.LONG)
+            return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createLong(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createLong(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
         else if (type == DataBuffer.Type.HALF)
             return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createHalf(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createHalf(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
         else if (type == DataBuffer.Type.DOUBLE)
@@ -1371,6 +1373,8 @@ public class Nd4j {
         long length = ArrayUtil.prodLong(shape);
         if (type == DataBuffer.Type.INT)
             return DATA_BUFFER_FACTORY_INSTANCE.createInt(length);
+        if (type == DataBuffer.Type.LONG)
+            return DATA_BUFFER_FACTORY_INSTANCE.createLong(length);
         else if (type == DataBuffer.Type.HALF)
             return DATA_BUFFER_FACTORY_INSTANCE.createHalf(length);
 
@@ -1382,6 +1386,8 @@ public class Nd4j {
 
         if (type == DataBuffer.Type.INT)
             return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createInt(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createInt(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
+        else if (type == DataBuffer.Type.LONG)
+            return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createLong(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createLong(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
         else if (type == DataBuffer.Type.HALF)
             return Nd4j.getMemoryManager().getCurrentWorkspace() == null ? DATA_BUFFER_FACTORY_INSTANCE.createHalf(length, true) : DATA_BUFFER_FACTORY_INSTANCE.createHalf(length, true, Nd4j.getMemoryManager().getCurrentWorkspace());
         else if (type == DataBuffer.Type.DOUBLE)
@@ -1395,6 +1401,8 @@ public class Nd4j {
         long length = ArrayUtil.prodLong(shape);
         if (type == DataBuffer.Type.INT)
             return DATA_BUFFER_FACTORY_INSTANCE.createInt(length);
+        else if (type == DataBuffer.Type.INT)
+            return DATA_BUFFER_FACTORY_INSTANCE.createLong(length);
         else if (type == DataBuffer.Type.HALF)
             return DATA_BUFFER_FACTORY_INSTANCE.createHalf(length);
 
@@ -1416,6 +1424,8 @@ public class Nd4j {
         switch (type) {
             case INT:
                 return DATA_BUFFER_FACTORY_INSTANCE.createInt(buffer, length);
+            case LONG:
+                return DATA_BUFFER_FACTORY_INSTANCE.createLong(buffer, length);
             case DOUBLE:
                 return DATA_BUFFER_FACTORY_INSTANCE.createDouble(buffer, length);
             case FLOAT:
@@ -2664,7 +2674,7 @@ public class Nd4j {
      * @throws IOException
      */
     public static INDArray read(DataInputStream dis) throws IOException {
-        DataBuffer shapeInformation = Nd4j.createBufferDetached(new int[1], DataBuffer.Type.INT);
+        DataBuffer shapeInformation = Nd4j.createBufferDetached(new int[1], DataBuffer.Type.LONG);
         shapeInformation.read(dis);
         int length = Shape.length(shapeInformation);
         DataBuffer data = CompressedDataBuffer.readUnknown(dis, length);
@@ -4938,14 +4948,6 @@ public class Nd4j {
     public static INDArray create(float[] data, long[] shape, char ordering) {
         shape = getEnsuredShape(shape);
 
-        if (shape.length == 1) {
-            if (shape[0] == data.length) {
-                shape = new long[] {1, data.length};
-            } else
-                throw new ND4JIllegalStateException("Shape of the new array " + Arrays.toString(shape)
-                        + " doesn't match data length: " + data.length);
-        }
-
         checkShapeValues(data.length, shape);
 
         INDArray ret = INSTANCE.create(data, shape, 0, ordering);
@@ -4955,14 +4957,6 @@ public class Nd4j {
 
     public static INDArray create(double[] data, long[] shape, char ordering) {
         shape = getEnsuredShape(shape);
-
-        if (shape.length == 1) {
-            if (shape[0] == data.length) {
-                shape = new long[] {1, data.length};
-            } else
-                throw new ND4JIllegalStateException("Shape of the new array " + Arrays.toString(shape)
-                        + " doesn't match data length: " + data.length);
-        }
 
         checkShapeValues(data.length, shape);
 
