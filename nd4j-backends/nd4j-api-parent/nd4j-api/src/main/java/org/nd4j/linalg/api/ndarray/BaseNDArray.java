@@ -48,7 +48,6 @@ import org.nd4j.linalg.api.ops.impl.broadcast.*;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.scalar.*;
 import org.nd4j.linalg.api.ops.impl.scalar.comparison.*;
-import org.nd4j.linalg.api.ops.impl.shape.Tile;
 import org.nd4j.linalg.api.ops.impl.transforms.Assign;
 import org.nd4j.linalg.api.ops.impl.transforms.MatchConditionTransform;
 import org.nd4j.linalg.api.ops.impl.transforms.Negative;
@@ -5078,9 +5077,9 @@ public abstract class BaseNDArray implements INDArray, Iterable {
                 }
             }
 
-            Nd4j.getExecutioner().exec(new Tile(new INDArray[]{this},new INDArray[]{result},repeat));
+            //Nd4j.getExecutioner().exec(new Tile(new INDArray[]{this},new INDArray[]{result},repeat));
 
-            //result = Nd4j.tile(this,repeat);
+            result = Nd4j.tile(this,repeat);
         }
         return result;
 
