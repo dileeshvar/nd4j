@@ -5647,6 +5647,33 @@ public class Nd4jTestsC extends BaseNd4jTest {
     }
 
     @Test
+    public void testReduction_Z1() throws Exception {
+        val arrayX = Nd4j.create(10, 10, 10);
+
+        val res = arrayX.max(1, 2);
+
+        Nd4j.getExecutioner().commit();
+    }
+
+    @Test
+    public void testReduction_Z2() throws Exception {
+        val arrayX = Nd4j.create(10, 10);
+
+        val res = arrayX.max(0);
+
+        Nd4j.getExecutioner().commit();
+    }
+
+    @Test
+    public void testReduction_Z3() throws Exception {
+        val arrayX = Nd4j.create(200, 300);
+
+        val res = arrayX.maxNumber().doubleValue();
+
+        Nd4j.getExecutioner().commit();
+    }
+
+    @Test
     public void testSoftmaxZ1() throws Exception {
         val original = Nd4j.linspace(1, 100, 100).reshape(10, 10);
         val reference = original.dup(original.ordering());
@@ -5660,11 +5687,6 @@ public class Nd4jTestsC extends BaseNd4jTest {
 
         assertEquals(reference, original);
         assertEquals(expected, result);
-
-        val set = Nd4j.getExecutioner().getCustomOperations().keySet();
-        for (val v: set) {
-            log.info("Op: {}", v);
-        }
     }
 
     @Test
