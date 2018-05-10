@@ -1982,7 +1982,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         } else if (Shape.rank(javaShapeInformation) == 1) {
             return shapeOf().getInt(0) == 1;
         } else if (Shape.rank(javaShapeInformation) == 2) {
-            return shapeOf().getInt(0) == 1 && shapeOf().getInt(1) == 1;
+            return shape()[0] == 1 && shape()[1] == 1;
         }
 
         else
@@ -5146,7 +5146,8 @@ public abstract class BaseNDArray implements INDArray, Iterable {
             throw new IllegalArgumentException("Invalid size: cannot get size of dimension " + dimension + " for rank "
                     + rank() + " NDArray (array shape: " + Arrays.toString(this.shape()) + ")");
 
-
+        val _shapeInfo = shapeInfoDataBuffer();
+        val _shape = shapeOf();
         return shapeOf().getInt(dimension);
     }
 

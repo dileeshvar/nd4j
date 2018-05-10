@@ -56,7 +56,7 @@ public class BasicTADManager implements TADManager {
         //     logger.info("Original shape info before TAD: {}", array.shapeInfoDataBuffer());
         //    logger.info("dimension: {}, tadLength: {}, offsetLength for TAD: {}", Arrays.toString(dimension),tadLength, offsetLength);
 
-        DataBuffer outputBuffer = new CudaIntDataBuffer(targetRank * 2 + 4);
+        DataBuffer outputBuffer = new CudaLongDataBuffer(targetRank * 2 + 4);
         DataBuffer offsetsBuffer = new CudaLongDataBuffer(offsetLength);
 
         AtomicAllocator.getInstance().getAllocationPoint(outputBuffer).tickHostWrite();

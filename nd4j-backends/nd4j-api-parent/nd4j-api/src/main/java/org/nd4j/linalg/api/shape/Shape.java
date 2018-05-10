@@ -2798,7 +2798,7 @@ public class Shape {
      * @return
      */
     public static DataBuffer shapeOf(DataBuffer buffer) {
-        int rank = buffer.getInt(0);
+        int rank = (int) buffer.getLong(0);
         return Nd4j.createBuffer(buffer, 1, rank);
     }
 

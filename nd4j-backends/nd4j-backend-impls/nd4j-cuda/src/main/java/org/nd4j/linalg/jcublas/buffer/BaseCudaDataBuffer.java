@@ -396,6 +396,14 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         set(data, data.length, 0, 0);
     }
 
+    public BaseCudaDataBuffer(long[] data, boolean copy) {
+        //super(data);
+        this(data.length, Nd4j.dataType() == Type.DOUBLE ? 8 : Nd4j.dataType() == Type.FLOAT ? 4 : 2, false);
+
+        if (copy)
+            set(data, data.length, 0, 0);
+    }
+
     public BaseCudaDataBuffer(double[] data) {
         // super(data);
         this(data.length, Nd4j.dataType() == Type.DOUBLE ? 8 : Nd4j.dataType() == Type.FLOAT ? 4 : 2, false);
@@ -429,6 +437,7 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     public long address() {
         return allocationPoint.getPointers().getHostPointer().address();
     }
+
 
     /**
      *

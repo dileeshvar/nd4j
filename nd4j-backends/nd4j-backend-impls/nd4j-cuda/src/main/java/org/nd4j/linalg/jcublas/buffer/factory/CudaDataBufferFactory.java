@@ -29,6 +29,7 @@ import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.LongBuffer;
 import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.jcublas.buffer.*;
 import org.nd4j.linalg.util.ArrayUtil;
 import org.slf4j.Logger;
@@ -75,8 +76,11 @@ public class CudaDataBufferFactory implements DataBufferFactory {
             return new CudaIntDataBuffer(underlyingBuffer, length, offset);
         } else if (underlyingBuffer.dataType() == DataBuffer.Type.HALF) {
             return new CudaHalfDataBuffer(underlyingBuffer, length, offset);
+        } else if (underlyingBuffer.dataType() == DataBuffer.Type.LONG) {
+            return new CudaLongDataBuffer(underlyingBuffer, length, offset);
         }
-        return null;
+
+        throw new ND4JIllegalStateException("Unknown data buffer type: " + underlyingBuffer.dataType().toString());
     }
 
     /**
@@ -800,27 +804,27 @@ public class CudaDataBufferFactory implements DataBufferFactory {
 
     @Override
     public DataBuffer createLong(long[] data) {
-        throw new UnsupportedOperationException();
+        return createLong(data, true);
     }
 
     @Override
     public DataBuffer createLong(long[] data, boolean copy) {
-        throw new UnsupportedOperationException();
+        return new CudaLongDataBuffer(data, copy);
     }
 
     @Override
     public DataBuffer createLong(long length) {
-        throw new UnsupportedOperationException();
+        return createLong(length, true);
     }
 
     @Override
     public DataBuffer createLong(long length, boolean initialize) {
-        throw new UnsupportedOperationException();
+        return new CudaLongDataBuffer(length, initialize);
     }
 
     @Override
     public DataBuffer createLong(long length, boolean initialize, MemoryWorkspace workspace) {
-        throw new UnsupportedOperationException();
+        return new CudaLongDataBuffer(length, initialize, workspace);
     }
 
 }
