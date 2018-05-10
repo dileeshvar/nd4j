@@ -865,8 +865,8 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
         PointerPointer extras = new PointerPointer(AddressRetriever.retrieveHostPointer(ret.shapeInfoDataBuffer()),
                 context.getOldStream(), allocator.getDeviceIdPointer());
 
-        CudaIntDataBuffer tempIndexes = new CudaIntDataBuffer(indexes.length);
-        AtomicAllocator.getInstance().memcpyBlocking(tempIndexes, new IntPointer(indexes), indexes.length * 4, 0);
+        val tempIndexes = new CudaLongDataBuffer(indexes.length);
+        AtomicAllocator.getInstance().memcpyBlocking(tempIndexes, new LongPointer(ArrayUtil.toLongArray(indexes)), indexes.length * 8, 0);
 
         Pointer pIndex = AtomicAllocator.getInstance().getPointer(tempIndexes, context);
 
@@ -1190,9 +1190,9 @@ public class JCublasNDArrayFactory extends BaseNDArrayFactory {
 
         val numTads = arrays.get(0).length() / tadLength;
 
-        val map = ArrayUtil.buildInterleavedVector(rnd, numTads);
+        val map = ArrayUtil.buildInterleavedVector(rnd, (int) numTads);
 
-        CudaLongDataBuffer shuffle = new CudaLongDataBuffer(map);
+        val shuffle = new CudaIntDataBuffer(map);
 
         Pointer shuffleMap = allocator.getPointer(shuffle, context);
 
