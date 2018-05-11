@@ -34,7 +34,6 @@ import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.indexing.ShapeOffsetResolution;
 import org.nd4j.linalg.util.ArrayUtil;
 
-import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -134,7 +133,8 @@ public class Shape {
                 dims.add(i);
             }
             else if(left[leftIdx] != right[rightIdx]) {
-                throw new IllegalArgumentException("Unable to broadcast dimension " + i + " due to shape mismatch. Right shape must be 1.");
+                throw new IllegalArgumentException("Unable to broadcast dimension " + i + " due to shape mismatch. Right shape must be 1. "
+                        + "Left array shape: " + Arrays.toString(left) + ", right array shape: " + Arrays.toString(right));
             }
 
             leftIdx--;
@@ -681,10 +681,8 @@ public class Shape {
 
     public static long getOffset(int[] shapeInformation, int... indices) {
         int rank = rank(shapeInformation);
-        if (indices.length != rank)
-            throw new IllegalArgumentException("Indexes must be same length as array rank");
-        long offset = 0;
-        for (int i = 0; i < rank; i++) {
+         long offset = 0;
+        for (int i = 0; i < Math.min(rank,indices.length); i++) {
             int size_dimi = size(shapeInformation, i);
             if (indices[i] > size_dimi)
                 throw new IllegalArgumentException(
@@ -1838,6 +1836,15 @@ public class Shape {
         int rank = Shape.rank(buffer);
         for (int i = 0; i < rank; i++)
             ret *= shape.getInt(i);
+        return ret;
+    }
+
+
+    public static long length(int[] buffer) {
+        long ret = 1;
+        int limit = Shape.rank(buffer) + 1;
+        for (int i = 1; i < limit; i++)
+            ret *= buffer[i];
         return ret;
     }
 

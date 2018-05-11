@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.nd4j</groupId>
     <artifactId>nd4j</artifactId>
-    <version>0.9.2-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -518,7 +518,6 @@
         <module>nd4j-shade</module>
         <module>nd4j-jdbc</module>
         <module>nd4j-instrumentation</module>
-        <module>nd4j-perf</module>
         <module>nd4j-serde</module>
         <module>nd4j-common</module>
         <module>nd4j-buffer</module>
@@ -529,12 +528,12 @@
     </modules>
 
     <properties>
-        <dl4j-test-resources.version>0.9.2-SNAPSHOT</dl4j-test-resources.version>
+        <dl4j-test-resources.version>1.0.0-SNAPSHOT</dl4j-test-resources.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <commons-io.version>2.4</commons-io.version>
         <commons-math3.version>3.4.1</commons-math3.version>
-        <commons-lang3.version>3.3.1</commons-lang3.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <commons-compress.version>1.16.1</commons-compress.version>
         <camel.version>2.18.2</camel.version>
@@ -548,7 +547,7 @@
         <reflections.version>0.9.10</reflections.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.10</slf4j.version>
+        <slf4j.version>1.7.12</slf4j.version>
         <logback.version>1.1.2</logback.version>
         <javacpp.version>1.4.1</javacpp.version>
         <javacpp-presets.version>1.4.1</javacpp-presets.version>
@@ -734,7 +733,6 @@
                   <directory>nd4j-shade</directory>
                   <directory>nd4j-jdbc</directory>
                   <directory>nd4j-instrumentation</directory>
-                  <directory>nd4j-perf</directory>
                   <directory>nd4j-serde</directory>
                   <directory>nd4j-common</directory>
                   <directory>nd4j-buffer</directory>
