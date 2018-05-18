@@ -133,7 +133,7 @@ public class Nd4jCpuPresets implements InfoMapper, BuildEnabled {
                         .put(new Info("char").valueTypes("char").pointerTypes("@Cast(\"char*\") String",
                                         "@Cast(\"char*\") BytePointer"))
                         .put(new Info("Nd4jPointer").cast().valueTypes("Pointer").pointerTypes("PointerPointer"))
-                        .put(new Info("Nd4jIndex").cast().valueTypes("long").pointerTypes("LongPointer", "LongBuffer",
+                        .put(new Info("Nd4jLong").cast().valueTypes("long").pointerTypes("LongPointer", "LongBuffer",
                                         "long[]"))
                         .put(new Info("Nd4jStatus").cast().valueTypes("int").pointerTypes("IntPointer", "IntBuffer",
                                         "int[]"))
@@ -150,6 +150,7 @@ public class Nd4jCpuPresets implements InfoMapper, BuildEnabled {
                                            .pointerTypes("@Cast({\"char*\", \"std::string*\"}) BytePointer"))
                .put(new Info("std::pair<int,int>").pointerTypes("IntIntPair").define())
                .put(new Info("std::vector<std::vector<int> >").pointerTypes("IntVectorVector").define())
+               .put(new Info("std::vector<std::vector<Nd4jLong> >").pointerTypes("LongVectorVector").define())
                .put(new Info("std::vector<nd4j::NDArray<float>*>").pointerTypes("FloatNDArrayVector").define())
                .put(new Info("std::vector<nd4j::NDArray<float16>*>").pointerTypes("HalfNDArrayVector").define())
                .put(new Info("std::vector<nd4j::NDArray<double>*>").pointerTypes("DoubleNDArrayVector").define())
@@ -196,7 +197,7 @@ public class Nd4jCpuPresets implements InfoMapper, BuildEnabled {
         files.addAll(Arrays.asList(new File(file.getParent(), "headers").listFiles()));
         Collections.sort(files);
         for (File f : files) {
-            try (Scanner scanner = new Scanner(f)) {
+            try (Scanner scanner = new Scanner(f, "UTF-8")) {
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine().trim();
                     if (line.startsWith("DECLARE_")) {
